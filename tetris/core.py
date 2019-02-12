@@ -9,6 +9,20 @@ BLOCKS = [
 
     ([0,1,0],
      [1,1,1]),
+
+    ([0,1],
+     [0,1],
+     [1,1]),
+
+    ([1,0],
+     [1,0],
+     [1,1]),
+
+    ([0,1],
+     [0,1],
+     [0,1],
+     [0,1])
+
 ]
 
 COLOURS = [
@@ -34,19 +48,19 @@ class Block:
                     grid[rowidx + self.topleft[0]][colidx + self.topleft[1] // 2][1] = self.colour
 
     def move_left(self, grid):
-        if self.topleft[1] < 1:
+        if self.topleft[1] + len(self.shape[0]) < 1:
             raise OutOfBoundsError
 
-        for row in range(len(self.shape)):
-            for col in range(len(self.shape[row])):
-                if self.shape[row][col] != 0:
-                    if grid[row + self.topleft[0]][col + (self.topleft[1] // 2) - 1][0] != 0:
+        for rowidx, row in enumerate(self.shape):
+            for colidx, col in enumerate(row):
+                if self.shape[rowidx][colidx] != 0:
+                    if grid[rowidx + self.topleft[0]][colidx + (self.topleft[1] // 2) - 1][0] != 0:
                         raise CollisionError
 
         self.topleft[1] -= 2
 
     def move_right(self, grid):
-        if self.topleft[1] + 2 > 15:
+        if self.topleft[1] + len(self.shape[0]) > 16:
             raise OutOfBoundsError
 
         for row in range(len(self.shape)):
@@ -58,7 +72,7 @@ class Block:
         self.topleft[1] += 2
 
     def move_down(self, grid):
-        if self.topleft[0] >= 14:
+        if self.topleft[0] >= 16 - len(self.shape):
             raise OutOfBoundsError
 
         for row in range(len(self.shape)):
