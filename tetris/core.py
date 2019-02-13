@@ -10,53 +10,50 @@ BLOCKS = {
 #   ([1,1,0],
 #    [0,1,1]),
 
-"T": [
-        ([1,1,1],
-         [0,1,0]),
+#"T": [
+#        ([1,1,1],
+#         [0,1,0]),
 
-        ([0,1],
-         [1,1],
-         [0,1]),
+#        ([0,1],
+#         [1,1],
+#         [0,1]),
 
-        ([0,1,0],
-         [1,1,1]),
+#        ([0,1,0],
+#         [1,1,1]),
 
-        ([1,0],
-         [1,1],
-         [1,0])
-     ],
+#        ([1,0],
+#         [1,1],
+#         [1,0])
+#     ],
 
 #    ([0,1],
 #     [0,1],
 #     [1,1]),
 
-"L": [
-        ([1,0],
-         [1,0],
-         [1,1]),
+#"L": [
+#        ([1,0],
+#         [1,0],
+#         [1,1]),
 
-        ([1,1,1],
-         [1,0,0]),
+#        ([1,1,1],
+#         [1,0,0]),
 
-        ([1,1],
-         [0,1],
-         [0,1]),
+#        ([1,1],
+#         [0,1],
+#         [0,1]),
 
-        ([0,0,1],
-         [1,1,1])
-     ]
+#        ([0,0,1],
+#         [1,1,1])
+#     ]
 
-#"I": [
-#        ([1,0,0,0],
-#         [1,0,0,0],
-#         [1,0,0,0],
-#         [1,0,0,0]),
+"I": [
+        ([1],
+         [1],
+         [1],
+         [1]),
 
-#        ([0,0,0,0],
-#         [0,0,0,0],
-#         [0,0,0,0],
-#         [1,1,1,1])
-#      ]
+        ([[1,1,1,1]])
+      ]
 
 }
 
@@ -70,7 +67,7 @@ COLOURS = [
 class Block:
 
     def __init__(self):
-        self.shape = BLOCKS[random.choice(list(BLOCKS))][random.randint(0,3)]
+        self.shape = BLOCKS[random.choice(list(BLOCKS))][random.randint(0,1)]
         self.topleft = [1, 4]
         self.colour_num = random.choice([1,2,3,4])
         self.colour = curses.color_pair(self.colour_num)
@@ -95,10 +92,10 @@ class Block:
         self.topleft[1] -= 2
 
     def move_right(self, grid):
-        if len(self.shape[0]) == 4 and all(x == 1 for x in self.shape[3]):
+        if len(self.shape[0]) == 4 and all(x == 1 for x in self.shape[0]):
             boundary = 15
         elif len(self.shape) == 4 and all(x[0] == 1 for x in self.shape):
-            boundary = 21 
+            boundary = 18 
         else:
             boundary = 16
 
