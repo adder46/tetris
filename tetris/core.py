@@ -137,8 +137,21 @@ class Game:
         self.grid = [[[0, None] for i in range(10)] for j in range(16)]
         self.counter = 0
 
-    def pause(self):
-        pass
+    async def pause(self):
+        """
+        Pauses the gameplay and waits for user input. If the input is key "p",
+        it quits waiting and goes back to main game loop.
+        """
+        while True:
+            try:
+                user_input = self.screen.getch()
+            except curses.error:
+                await trio.sleep(0.1)
+                continue
+            if ord("p") == user_input:
+                break
+
+
 
 class OutOfBoundsError(Exception):
     pass

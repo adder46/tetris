@@ -75,15 +75,15 @@ async def main(outer_screen):
 
         while True:
             user_input = inner_screen.getch()
-
             if user_input == -1:
                 break
-
             if user_input in bindings["dir"]:
                 try:
                     bindings["dir"][user_input](game.grid)
                 except (OutOfBoundsError, CollisionError):
                     break
-
+            if user_input in bindings["ctrl"]:
+                await bindings["ctrl"][user_input]()
+        
         await trio.sleep(.1)
 
