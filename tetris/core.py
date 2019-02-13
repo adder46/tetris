@@ -4,11 +4,14 @@ import curses
 import q
 
 BLOCKS = [
-    ([0,1,1],
-     [1,1,0]),
+   ([0,1,1],
+    [1,1,0]),
 
-    ([0,1,0],
-     [1,1,1]),
+   ([1,1,0],
+    [0,1,1]),
+
+   ([0,1,0],
+    [1,1,1]),
 
     ([0,1],
      [0,1],
@@ -18,10 +21,10 @@ BLOCKS = [
      [1,0],
      [1,1]),
 
-    ([0,1],
-     [0,1],
-     [0,1],
-     [0,1])
+    ([1],
+     [1],
+     [1],
+     [1])
 
 ]
 
@@ -48,7 +51,7 @@ class Block:
                     grid[rowidx + self.topleft[0]][colidx + self.topleft[1] // 2][1] = self.colour
 
     def move_left(self, grid):
-        if self.topleft[1] + len(self.shape[0]) < 1:
+        if self.topleft[1] <= 1:
             raise OutOfBoundsError
 
         for rowidx, row in enumerate(self.shape):
@@ -60,7 +63,7 @@ class Block:
         self.topleft[1] -= 2
 
     def move_right(self, grid):
-        if self.topleft[1] + len(self.shape[0]) > 16:
+        if self.topleft[1] + len(self.shape[0])-1 >= (18 if len(self.shape[0]) == 1 else 16):
             raise OutOfBoundsError
 
         for row in range(len(self.shape)):
