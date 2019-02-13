@@ -10,41 +10,41 @@ BLOCKS = {
 #   ([1,1,0],
 #    [0,1,1]),
 
-#"T": [
-#        ([1,1,1],
-#         [0,1,0]),
+"T": [
+        ([1,1,1],
+         [0,1,0]),
 
-#        ([0,1],
-#         [1,1],
-#         [0,1]),
+        ([0,1],
+         [1,1],
+         [0,1]),
 
-#        ([0,1,0],
-#         [1,1,1]),
+        ([0,1,0],
+         [1,1,1]),
 
-#        ([1,0],
-#         [1,1],
-#         [1,0])
-#     ],
+        ([1,0],
+         [1,1],
+         [1,0])
+     ],
 
 #    ([0,1],
 #     [0,1],
 #     [1,1]),
 
-#"L": [
-#        ([1,0],
-#         [1,0],
-#         [1,1]),
+"L": [
+        ([1,0],
+         [1,0],
+         [1,1]),
 
-#        ([1,1,1],
-#         [1,0,0]),
+        ([1,1,1],
+         [1,0,0]),
 
-#        ([1,1],
-#         [0,1],
-#         [0,1]),
+        ([1,1],
+         [0,1],
+         [0,1]),
 
-#        ([0,0,1],
-#         [1,1,1])
-#     ]
+        ([0,0,1],
+         [1,1,1])
+     ],
 
 "I": [
         ([1],
@@ -92,9 +92,9 @@ class Block:
         self.topleft[1] -= 2
 
     def move_right(self, grid):
-        if len(self.shape[0]) == 4 and all(x == 1 for x in self.shape[0]):
+        if self.is_horizontal_I_tetromino():
             boundary = 15
-        elif len(self.shape) == 4 and all(x[0] == 1 for x in self.shape):
+        elif self.is_vertical_I_tetromino():
             boundary = 18 
         else:
             boundary = 16
@@ -102,10 +102,10 @@ class Block:
         if self.topleft[1] + len(self.shape[0]) - 1 >= boundary:
             raise OutOfBoundsError
 
-        for row in range(len(self.shape)):
-            for col in range(len(self.shape[row])):
-                if self.shape[row][col] != 0:
-                    if grid[row + self.topleft[0]][col + (self.topleft[1] // 2) + 1][0] != 0:
+        for rowidx, row in enumerate(self.shape):
+            for colidx, col in enumerate(row):
+                if self.shape[rowidx][colidx] != 0:
+                    if grid[rowidx + self.topleft[0]][colidx + (self.topleft[1] // 2) + 1][0] != 0:
                         raise CollisionError
 
         self.topleft[1] += 2
@@ -121,6 +121,13 @@ class Block:
                         raise CollisionError
 
         self.topleft[0] += 1
+
+    def is_vertical_I_tetromino(self):
+        return len(self.shape) == 4 and all(x[0] == 1 for x in self.shape)
+
+    def is_horizontal_I_tetromino(self):
+        return len(self.shape[0]) == 4 and all(x == 1 for x in self.shape[0])
+
 
 class Game:
 

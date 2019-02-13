@@ -1,4 +1,5 @@
 import curses
+import sys
 
 import trio
 import q
@@ -36,6 +37,18 @@ async def main(outer_screen):
     user_interface = UserInterface(inner_screen)
     game = Game(inner_screen)
 
+    bindings = {
+        "ctrl": {
+            ord("p"): game.pause,
+            ord("q"): sys.exit
+        },
+        "dir": {
+            curses.KEY_DOWN: lambda grid: game.block.move_down(grid),
+            curses.KEY_LEFT: lambda grid: game.block.move_left(grid),
+            curses.KEY_RIGHT: lambda grid: game.block.move_right(grid),
+        }
+    }
+
     while True:
         game.counter += 1
         outer_screen.erase()
@@ -61,19 +74,14 @@ async def main(outer_screen):
                 game.counter = 0
 
         while True:
-            try:
-                user_input = inner_screen.getkey()
-            except curses.error:
+            user_input = inner_screen.getch()
+
+            if user_input == -1:
                 break
 
-            if user_input == 'a':
+            if user_input in bindings["dir"]:
                 try:
-                    game.block.move_left(game.grid)
-                except (OutOfBoundsError, CollisionError):
-                    break
-            if user_input == 'd':
-                try:
-                    game.block.move_right(game.grid)
+                    bindings["dir"][user_input](game.grid)
                 except (OutOfBoundsError, CollisionError):
                     break
 
