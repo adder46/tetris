@@ -21,10 +21,15 @@ BLOCKS = [
      [1,0],
      [1,1]),
 
-    ([1],
-     [1],
-     [1],
-     [1])
+    ([1,0,0,0],
+     [1,0,0,0],
+     [1,0,0,0],
+     [1,0,0,0]),
+
+    ([0,0,0,0],
+     [0,0,0,0],
+     [0,0,0,0],
+     [1,1,1,1])
 
 ]
 
@@ -63,7 +68,14 @@ class Block:
         self.topleft[1] -= 2
 
     def move_right(self, grid):
-        if self.topleft[1] + len(self.shape[0])-1 >= (18 if len(self.shape[0]) == 1 else 16):
+        if len(self.shape[0]) == 4 and all(x == 1 for x in self.shape[3]):
+            boundary = 15
+        elif len(self.shape) == 4 and all(x[0] == 1 for x in self.shape):
+            boundary = 21 
+        else:
+            boundary = 16
+
+        if self.topleft[1] + len(self.shape[0]) - 1 >= boundary:
             raise OutOfBoundsError
 
         for row in range(len(self.shape)):
