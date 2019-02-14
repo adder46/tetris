@@ -78,16 +78,35 @@ class Block:
     def rotate_right(self):
         current_rotation = BLOCKS[self.letter].index(self.shape)
         next_rotation = current_rotation + 1
+
         try:
-            BLOCKS[self.letter][next_rotation]
+            potential_shape = BLOCKS[self.letter][next_rotation]
         except IndexError:
             next_rotation = 0
-        finally:
-            self.shape = BLOCKS[self.letter][next_rotation]
+            potential_shape = BLOCKS[self.letter][next_rotation]
+   
+        for rowidx, row in enumerate(potential_shape):
+            for colidx, col in enumerate(row):
+                if potential_shape[rowidx][colidx] != 0:
+                    if colidx + self.topleft[1] >= 16:
+                        return
+
+        self.shape = BLOCKS[self.letter][next_rotation]
 
     def rotate_left(self):
         current_rotation = BLOCKS[self.letter].index(self.shape)
         next_rotation = current_rotation - 1
+
+        potential_shape = BLOCKS[self.letter][next_rotation]
+
+        for rowidx, row in enumerate(potential_shape):
+            for colidx, col in enumerate(row):
+                if potential_shape[rowidx][colidx] != 0:
+                    if colidx + self.topleft[1] >= 16:
+                        return
+                    if colidx + self.topleft[1] <= 1:
+                        return
+
         if next_rotation <= -1:
             next_rotation = len(BLOCKS[self.letter]) - 1
         self.shape = BLOCKS[self.letter][next_rotation]
