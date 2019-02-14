@@ -1,5 +1,6 @@
 import random
 import curses
+import collections
 
 import q
 
@@ -143,7 +144,7 @@ class Game:
     def __init__(self, screen):
         self.screen = screen
         self.block = Block()
-        self.grid = [[[0, None] for i in range(10)] for j in range(16)]
+        self.grid = collections.deque([[[0, None] for i in range(10)] for j in range(16)], maxlen=16)
         self.counter = 0
 
     async def pause(self):
@@ -160,7 +161,11 @@ class Game:
             if ord("p") == user_input:
                 break
 
-
+    def clear_row(self):
+        for rowidx, row in enumerate(self.grid.copy()):
+            if all(x[0] == 1 for x in row):
+                self.grid.remove(row)
+                self.grid.insert(0, [[0, None] for i in range(10)])
 
 class OutOfBoundsError(Exception):
     pass

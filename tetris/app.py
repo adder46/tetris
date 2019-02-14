@@ -77,6 +77,8 @@ async def main(outer_screen):
             finally:
                 game.counter = 0
 
+        game.clear_row()
+
         while True:
             user_input = inner_screen.getch()
             if user_input == -1:
