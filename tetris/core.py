@@ -33,7 +33,12 @@ class Block:
                     grid[rowidx + self.topleft[0]][colidx + self.topleft[1] // 2][1] = self.colour
 
     def move_left(self, grid):
-        if self.topleft[1] <= 1:
+        if self.is_vertical_I_tetromino():
+            boundary = -3 
+        else:
+            boundary = 1
+
+        if self.topleft[1] <= boundary:
             raise OutOfBoundsError
 
         for rowidx, row in enumerate(self.shape):
@@ -47,8 +52,6 @@ class Block:
     def move_right(self, grid):
         if self.is_horizontal_I_tetromino():
             boundary = 15
-        elif self.is_vertical_I_tetromino():
-            boundary = 18 
         else:
             boundary = 16
 
@@ -64,7 +67,12 @@ class Block:
         self.topleft[1] += 2
 
     def move_down(self, grid):
-        if self.topleft[0] >= 16 - len(self.shape):
+        if self.is_horizontal_I_tetromino():
+            boundary = 17
+        else:
+            boundary = 16
+
+        if self.topleft[0] >= boundary - len(self.shape):
             raise OutOfBoundsError
 
         for row in range(len(self.shape)):
@@ -79,6 +87,11 @@ class Block:
         current_rotation = BLOCKS[self.letter].index(self.shape)
         next_rotation = current_rotation + 1
 
+        if self.is_horizontal_I_tetromino() or self.is_vertical_I_tetromino():
+            boundary = 16
+        else:
+            boundary = 17
+
         try:
             potential_shape = BLOCKS[self.letter][next_rotation]
         except IndexError:
@@ -88,7 +101,9 @@ class Block:
         for rowidx, row in enumerate(potential_shape):
             for colidx, col in enumerate(row):
                 if potential_shape[rowidx][colidx] != 0:
-                    if colidx + self.topleft[1] >= 16:
+                    if colidx + self.topleft[1] >= boundary:
+                        return
+                    if colidx + self.topleft[1] <= -1:
                         return
 
         self.shape = BLOCKS[self.letter][next_rotation]
@@ -97,14 +112,19 @@ class Block:
         current_rotation = BLOCKS[self.letter].index(self.shape)
         next_rotation = current_rotation - 1
 
+        if self.is_horizontal_I_tetromino() or self.is_vertical_I_tetromino():
+            boundary = 16
+        else:
+            boundary = 17
+
         potential_shape = BLOCKS[self.letter][next_rotation]
 
         for rowidx, row in enumerate(potential_shape):
             for colidx, col in enumerate(row):
                 if potential_shape[rowidx][colidx] != 0:
-                    if colidx + self.topleft[1] >= 16:
+                    if colidx + self.topleft[1] >= boundary:
                         return
-                    if colidx + self.topleft[1] <= 1:
+                    if colidx + self.topleft[1] <= -1:
                         return
 
         if next_rotation <= -1:
@@ -112,10 +132,10 @@ class Block:
         self.shape = BLOCKS[self.letter][next_rotation]
 
     def is_vertical_I_tetromino(self):
-        return len(self.shape) == 4 and all(x[0] == 1 for x in self.shape)
+        return len(self.shape) == 4 and all(x[2] == 1 for x in self.shape)
 
     def is_horizontal_I_tetromino(self):
-        return len(self.shape[0]) == 4 and all(x == 1 for x in self.shape[0])
+        return len(self.shape) == 4 and all(x == 1 for x in self.shape[2])
 
 
 class Game:
