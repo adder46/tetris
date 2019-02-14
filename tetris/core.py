@@ -3,59 +3,8 @@ import curses
 
 import q
 
-BLOCKS = {
-#   ([0,1,1],
-#    [1,1,0]),
+from tetris.blocks import BLOCKS
 
-#   ([1,1,0],
-#    [0,1,1]),
-
-"T": [
-        ([1,1,1],
-         [0,1,0]),
-
-        ([0,1],
-         [1,1],
-         [0,1]),
-
-        ([0,1,0],
-         [1,1,1]),
-
-        ([1,0],
-         [1,1],
-         [1,0])
-     ],
-
-#    ([0,1],
-#     [0,1],
-#     [1,1]),
-
-"L": [
-        ([1,0],
-         [1,0],
-         [1,1]),
-
-        ([1,1,1],
-         [1,0,0]),
-
-        ([1,1],
-         [0,1],
-         [0,1]),
-
-        ([0,0,1],
-         [1,1,1])
-     ],
-
-"I": [
-        ([1],
-         [1],
-         [1],
-         [1]),
-
-        ([[1,1,1,1]])
-      ]
-
-}
 
 COLOURS = [
     curses.COLOR_RED,
@@ -67,7 +16,8 @@ COLOURS = [
 class Block:
 
     def __init__(self):
-        self.shape = BLOCKS[random.choice(list(BLOCKS))][random.randint(0,1)]
+        self.letter = random.choice(list(BLOCKS.keys()))
+        self.shape = BLOCKS[self.letter][random.randint(0, len(BLOCKS[self.letter]) - 1)]
         self.topleft = [1, 4]
         self.colour_num = random.choice([1,2,3,4])
         self.colour = curses.color_pair(self.colour_num)
@@ -121,6 +71,16 @@ class Block:
                         raise CollisionError
 
         self.topleft[0] += 1
+
+    def rotate_right(self, block):
+        current_rotation = BLOCKS[self.letter].index(block.shape)
+        next_rotation = current_rotation + 1
+        try:
+            BLOCKS[self.letter][next_rotation]
+        except IndexError:
+            next_rotation = 0
+        finally:
+            block.shape = BLOCKS[block.letter][next_rotation]
 
     def is_vertical_I_tetromino(self):
         return len(self.shape) == 4 and all(x[0] == 1 for x in self.shape)

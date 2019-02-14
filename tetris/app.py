@@ -40,7 +40,8 @@ async def main(outer_screen):
     bindings = {
         "ctrl": {
             ord("p"): game.pause,
-            ord("q"): sys.exit
+            ord("q"): sys.exit,
+            ord("d"): lambda block: game.block.rotate_right(block)
         },
         "dir": {
             curses.KEY_DOWN: lambda grid: game.block.move_down(grid),
@@ -83,7 +84,7 @@ async def main(outer_screen):
                 except (OutOfBoundsError, CollisionError):
                     break
             if user_input in bindings["ctrl"]:
-                await bindings["ctrl"][user_input]()
+                bindings["ctrl"][user_input](game.block)
         
         await trio.sleep(.1)
 
