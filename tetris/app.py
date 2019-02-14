@@ -41,12 +41,15 @@ async def main(outer_screen):
         "ctrl": {
             ord("p"): game.pause,
             ord("q"): sys.exit,
-            ord("d"): lambda block: game.block.rotate_right(block)
         },
         "dir": {
             curses.KEY_DOWN: lambda grid: game.block.move_down(grid),
             curses.KEY_LEFT: lambda grid: game.block.move_left(grid),
             curses.KEY_RIGHT: lambda grid: game.block.move_right(grid),
+        },
+        "tetromino": {
+            ord("a"): lambda block: game.block.rotate_left(),
+            ord("d"): lambda block: game.block.rotate_right()
         }
     }
 
@@ -84,7 +87,9 @@ async def main(outer_screen):
                 except (OutOfBoundsError, CollisionError):
                     break
             if user_input in bindings["ctrl"]:
-                bindings["ctrl"][user_input](game.block)
+                bindings["ctrl"][user_input]()
+            if user_input in bindings["tetromino"]:
+                bindings["tetromino"][user_input](game.block)
         
         await trio.sleep(.1)
 

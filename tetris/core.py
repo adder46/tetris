@@ -6,12 +6,16 @@ import q
 from tetris.blocks import BLOCKS
 
 
-COLOURS = [
-    curses.COLOR_RED,
-    curses.COLOR_BLUE,
-    curses.COLOR_GREEN,
-    curses.COLOR_YELLOW
-]
+COLOURS = {
+    "I": 1,
+    "O": 3,
+    "T": 4,
+    "L": 5,
+    "J": 7,
+    "S": 2,
+    "Z": 6
+}
+
 
 class Block:
 
@@ -19,8 +23,7 @@ class Block:
         self.letter = random.choice(list(BLOCKS.keys()))
         self.shape = BLOCKS[self.letter][random.randint(0, len(BLOCKS[self.letter]) - 1)]
         self.topleft = [1, 4]
-        self.colour_num = random.choice([1,2,3,4])
-        self.colour = curses.color_pair(self.colour_num)
+        self.colour = curses.color_pair(COLOURS[self.letter])
 
     def land(self, grid):
         for rowidx, row in enumerate(self.shape):
@@ -72,15 +75,22 @@ class Block:
 
         self.topleft[0] += 1
 
-    def rotate_right(self, block):
-        current_rotation = BLOCKS[self.letter].index(block.shape)
+    def rotate_right(self):
+        current_rotation = BLOCKS[self.letter].index(self.shape)
         next_rotation = current_rotation + 1
         try:
             BLOCKS[self.letter][next_rotation]
         except IndexError:
             next_rotation = 0
         finally:
-            block.shape = BLOCKS[block.letter][next_rotation]
+            self.shape = BLOCKS[self.letter][next_rotation]
+
+    def rotate_left(self):
+        current_rotation = BLOCKS[self.letter].index(self.shape)
+        next_rotation = current_rotation - 1
+        if next_rotation <= -1:
+            next_rotation = len(BLOCKS[self.letter]) - 1
+        self.shape = BLOCKS[self.letter][next_rotation]
 
     def is_vertical_I_tetromino(self):
         return len(self.shape) == 4 and all(x[0] == 1 for x in self.shape)

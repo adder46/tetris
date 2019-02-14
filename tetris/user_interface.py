@@ -32,6 +32,9 @@ class UserInterface:
         curses.init_pair(2, curses.COLOR_GREEN, curses.COLOR_GREEN)
         curses.init_pair(3, curses.COLOR_BLUE, curses.COLOR_BLUE)
         curses.init_pair(4, curses.COLOR_YELLOW, curses.COLOR_YELLOW)
+        curses.init_pair(5, curses.COLOR_MAGENTA, curses.COLOR_MAGENTA)
+        curses.init_pair(6, curses.COLOR_CYAN, curses.COLOR_CYAN)
+        curses.init_pair(7, curses.COLOR_WHITE, curses.COLOR_WHITE)
 
 
 class Renderer:
