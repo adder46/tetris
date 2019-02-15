@@ -132,6 +132,13 @@ class Block:
             next_rotation = len(BLOCKS[self.letter]) - 1
         self.shape = BLOCKS[self.letter][next_rotation]
 
+    def move_all_the_way_down(self, grid):
+        while True:
+            try:
+                self.move_down(grid)
+            except (OutOfBoundsError, CollisionError):
+                break
+
     def is_vertical_I_tetromino(self):
         return len(self.shape) == 4 and all(x[2] == 1 for x in self.shape)
 

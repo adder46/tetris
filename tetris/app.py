@@ -31,7 +31,8 @@ async def main(outer_screen):
     else:
         sys.exit(f"fatal: minimum terminal size needed [{MIN_HEIGHT}x{MIN_WIDTH}]")
 
-    inner_screen.nodelay(True)
+#    inner_screen.nodelay(True)
+    inner_screen.timeout(100)
     inner_screen.keypad(True)
 
     user_interface = UserInterface(inner_screen)
@@ -49,7 +50,8 @@ async def main(outer_screen):
         },
         "tetromino": {
             ord("a"): lambda block: game.block.rotate_left(),
-            ord("d"): lambda block: game.block.rotate_right()
+            ord("d"): lambda block: game.block.rotate_right(),
+            ord("s"): lambda grid: game.block.move_all_the_way_down(game.grid)
         }
     }
 
@@ -69,19 +71,21 @@ async def main(outer_screen):
         game.handle_falling()
         game.clear_rows()
 
-        while True:
+        try:
             user_input = inner_screen.getch()
-            if user_input == -1:
-                break
-            if user_input in bindings["dir"]:
-                try:
-                    bindings["dir"][user_input](game.grid)
-                except (OutOfBoundsError, CollisionError):
-                    break
-            if user_input in bindings["ctrl"]:
-                bindings["ctrl"][user_input]()
-            if user_input in bindings["tetromino"]:
-                bindings["tetromino"][user_input](game.block)
-        
-        await trio.sleep(.1)
+        except curses.error:
+            continue
+#        if user_input == -1:
+#            break
+        if user_input in bindings["dir"]:
+            try:
+                bindings["dir"][user_input](game.grid)
+            except (OutOfBoundsError, CollisionError):
+                continue
+        if user_input in bindings["ctrl"]:
+            bindings["ctrl"][user_input]()
+        if user_input in bindings["tetromino"]:
+            bindings["tetromino"][user_input](game.block)
 
+        
+#        await trio.sleep(0.1)
