@@ -54,30 +54,20 @@ async def main(outer_screen):
     }
 
     while True:
-        game.counter += 1
-        outer_screen.erase()
-        inner_screen.erase()
-        border_screen.erase()
-        border_screen.box(0, 0)
+        for screen in (outer_screen, inner_screen, border_screen):
+            screen.erase()
 
-        outer_screen.refresh()
-        inner_screen.refresh()
-        border_screen.refresh()
+        border_screen.box(0, 0)
+        user_interface.display_score(outer_screen, game.score)
+
+        for screen in (outer_screen, inner_screen, border_screen):
+            screen.refresh()
 
         user_interface.renderer.render_landed_blocks(game.grid)      
         user_interface.renderer.render_current_block(game.block)        
-       
-        if game.counter == 5:
-            try:
-                game.block.move_down(game.grid)
-            except (OutOfBoundsError, CollisionError):
-                game.block.land(game.grid)
-                game.block = Block()
-                continue
-            finally:
-                game.counter = 0
 
-        game.clear_row()
+        game.handle_falling()
+        game.clear_rows()
 
         while True:
             user_input = inner_screen.getch()

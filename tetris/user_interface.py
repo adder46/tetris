@@ -36,6 +36,14 @@ class UserInterface:
         curses.init_pair(6, curses.COLOR_CYAN, curses.COLOR_CYAN)
         curses.init_pair(7, curses.COLOR_WHITE, curses.COLOR_WHITE)
 
+    def display_score(self, screen, score):
+        """
+        Displays current score at the lower left-hand side of the screen.
+        """
+        y = (curses.LINES // 2 - (MIN_HEIGHT // 2)) + self.lines + 1
+        x = (curses.COLS // 2 - (MIN_WIDTH // 2)) - 1
+        screen.addstr(y, x, f" SCORE: {score} ", curses.A_BOLD)
+
 
 class Renderer:
 
