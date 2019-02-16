@@ -47,8 +47,8 @@ async def main(outer_screen):
             ord("s"): lambda grid: game.block.move_all_the_way_down(game.grid)
         },
         "rotations": {
-            ord("a"): lambda block: game.block.rotate_left(),
-            ord("d"): lambda block: game.block.rotate_right(),
+            ord("a"): lambda block, grid: game.block.rotate_left(grid),
+            ord("d"): lambda block, grid: game.block.rotate_right(grid),
         }
     }
 
@@ -88,4 +88,4 @@ async def main(outer_screen):
             except (OutOfBoundsError, CollisionError):
                 continue
         if user_input in bindings["rotations"]:
-            bindings["rotations"][user_input](game.block)
+            bindings["rotations"][user_input](game.block, game.grid)

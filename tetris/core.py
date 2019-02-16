@@ -84,7 +84,7 @@ class Block:
 
         self.topleft[0] += 1
 
-    def rotate_right(self):
+    def rotate_right(self, grid):
         current_rotation = BLOCKS[self.letter].index(self.shape)
         next_rotation = current_rotation + 1
 
@@ -102,6 +102,8 @@ class Block:
         for rowidx, row in enumerate(potential_shape):
             for colidx, col in enumerate(row):
                 if potential_shape[rowidx][colidx] != 0:
+                    if grid[rowidx + self.topleft[0]][colidx + (self.topleft[1] // 2) + 1][0] != 0:
+                        return
                     if colidx + self.topleft[1] >= boundary:
                         return
                     if colidx + self.topleft[1] <= -1:
@@ -109,7 +111,7 @@ class Block:
 
         self.shape = BLOCKS[self.letter][next_rotation]
 
-    def rotate_left(self):
+    def rotate_left(self, grid):
         current_rotation = BLOCKS[self.letter].index(self.shape)
         next_rotation = current_rotation - 1
 
@@ -123,6 +125,8 @@ class Block:
         for rowidx, row in enumerate(potential_shape):
             for colidx, col in enumerate(row):
                 if potential_shape[rowidx][colidx] != 0:
+                    if grid[rowidx + self.topleft[0]][colidx + (self.topleft[1] // 2) - 1][0] != 0:
+                        return
                     if colidx + self.topleft[1] >= boundary:
                         return
                     if colidx + self.topleft[1] <= -1:
