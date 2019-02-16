@@ -54,21 +54,26 @@ class Renderer:
     def __init__(self, screen):
         self.screen = screen
 
+    def _better_addstr(self, y, x, text, color_info_stuff):
+        screen_height, screen_width = self.screen.getmaxyx()
+        if x + len(text) == screen_width and y == screen_height-1:
+            # https://stackoverflow.com/q/36387625
+            try:
+                self.screen.addstr(y, x, text, color_info_stuff)
+            except curses.error:
+                pass
+        else:
+            self.screen.addstr(y, x, text, color_info_stuff)
+
+
     def render_landed_blocks(self, grid):
         for rowidx, row in enumerate(grid):
             for colidx, col in enumerate(row):
                 if grid[rowidx][colidx][0] != 0:
-                    try:
-                        self.screen.addstr(rowidx, colidx * 2, "██", col[1] if col[1] is not None else curses.COLOR_BLACK)
-                    except curses.error:
-                        return
-                        
+                    self._better_addstr(rowidx, colidx * 2, "██", col[1] if col[1] is not None else curses.COLOR_BLACK)
+
     def render_current_block(self, block):
         for rowidx, row in enumerate(block.shape):
             for colidx, col in enumerate(row):
                 if block.shape[rowidx][colidx] != 0:
-                    q/f"You tried to add ██ at {rowidx + block.topleft[0]}, {(colidx * 2) + block.topleft[1]}"
-                    try:
-                        self.screen.addstr(rowidx + block.topleft[0], (colidx * 2) + block.topleft[1], "██", block.colour)
-                    except curses.error:
-                        return
+                    self._better_addstr(rowidx + block.topleft[0], (colidx * 2) + block.topleft[1], "██", block.colour)
