@@ -1,10 +1,14 @@
 import curses
 import sys
 
+import q
 import trio
 
-MIN_WIDTH = 20
-MIN_HEIGHT = 16
+GRID_WIDTH = 10
+GRID_HEIGHT = 16
+
+INNER_SCREEN_WIDTH = GRID_WIDTH*2
+INNER_SCREEN_HEIGHT = GRID_HEIGHT
 
 class UserInterface:
 
@@ -19,7 +23,7 @@ class UserInterface:
         """
         Helper method to ensure correct terminal size
         """
-        if curses.LINES >= MIN_HEIGHT and curses.COLS >= MIN_WIDTH:
+        if curses.LINES >= INNER_SCREEN_HEIGHT and curses.COLS >= INNER_SCREEN_WIDTH:
             return True
         return False
 
@@ -40,8 +44,8 @@ class UserInterface:
         """
         Displays current score at the lower left-hand side of the screen.
         """
-        y = (curses.LINES // 2 - (MIN_HEIGHT // 2)) + self.lines + 1
-        x = (curses.COLS // 2 - (MIN_WIDTH // 2)) - 1
+        y = (curses.LINES // 2 - (INNER_SCREEN_HEIGHT // 2)) + self.lines + 1
+        x = (curses.COLS // 2 - (INNER_SCREEN_WIDTH // 2)) - 1
         screen.addstr(y, x, f" SCORE: {score} ", curses.A_BOLD)
 
 
@@ -54,10 +58,17 @@ class Renderer:
         for rowidx, row in enumerate(grid):
             for colidx, col in enumerate(row):
                 if grid[rowidx][colidx][0] != 0:
-                    self.screen.addstr(rowidx, colidx * 2, "██", col[1] if col[1] is not None else curses.COLOR_BLACK)
-
+                    try:
+                        self.screen.addstr(rowidx, colidx * 2, "██", col[1] if col[1] is not None else curses.COLOR_BLACK)
+                    except curses.error:
+                        return
+                        
     def render_current_block(self, block):
         for rowidx, row in enumerate(block.shape):
             for colidx, col in enumerate(row):
                 if block.shape[rowidx][colidx] != 0:
-                    self.screen.addstr(rowidx + block.topleft[0], (colidx * 2) + block.topleft[1], "██", block.colour)
+                    q/f"You tried to add ██ at {rowidx + block.topleft[0]}, {(colidx * 2) + block.topleft[1]}"
+                    try:
+                        self.screen.addstr(rowidx + block.topleft[0], (colidx * 2) + block.topleft[1], "██", block.colour)
+                    except curses.error:
+                        return
