@@ -2,11 +2,8 @@ import curses
 import sys
 
 import trio
-import q
-import more_itertools
-from pprint import pprint as pp
 
-from tetris.core import Block, Game, OutOfBoundsError, CollisionError
+from tetris.core import Game, OutOfBoundsError, CollisionError
 from tetris.user_interface import UserInterface, INNER_SCREEN_HEIGHT, INNER_SCREEN_WIDTH
 
 def sync_main():
@@ -27,7 +24,7 @@ async def main(outer_screen):
             (curses.COLS // 2 - (INNER_SCREEN_WIDTH // 2)) - 1
         )
     else:
-        sys.exit(f"fatal: minimum terminal size needed [{MIN_HEIGHT}x{MIN_WIDTH}]")
+        sys.exit(f"fatal: minimum terminal size needed [{INNER_SCREEN_HEIGHT}x{INNER_SCREEN_WIDTH}]")
 
     inner_screen.timeout(100)
     inner_screen.keypad(True)
@@ -44,11 +41,11 @@ async def main(outer_screen):
             curses.KEY_LEFT: lambda grid: game.block.move_left(grid),
             curses.KEY_RIGHT: lambda grid: game.block.move_right(grid),
             curses.KEY_DOWN: lambda grid: game.block.move_down(grid),
-            ord("s"): lambda grid: game.block.move_all_the_way_down(game.grid)
+            ord("s"): lambda grid: game.block.move_all_the_way_down(grid)
         },
         "rotations": {
-            ord("a"): lambda block, grid: game.block.rotate_left(grid),
-            ord("d"): lambda block, grid: game.block.rotate_right(grid),
+            ord("a"): lambda grid: game.block.rotate_left(grid),
+            ord("d"): lambda grid: game.block.rotate_right(grid),
         }
     }
 
@@ -60,13 +57,6 @@ async def main(outer_screen):
         user_interface.renderer.render_landed_blocks(game.grid)      
         user_interface.renderer.render_current_block(game.block)        
         user_interface.display_score(outer_screen, game.score)
-
-        # 'outer_screen', 'inner_screen', 'border_screen' - empty field, borders present, score present
-        # 'outer_screen', 'border_screen', 'inner_screen' - field present, right border absent, score present
-        # 'inner_screen', 'outer_screen', 'border_screen' - empty field. borders present, scorep present
-        # 'inner_screen', 'border_screen', 'outer_screen' - field absent, borders absent, score present
-        # 'border_screen', 'outer_screen', 'inner_screen'- field present, borders absent, score present
-        # 'border_screen', 'inner_screen', 'outer_screen') - field absent, borders absent, score present
 
         for screen in (outer_screen, border_screen, inner_screen):
             screen.refresh()
@@ -84,7 +74,7 @@ async def main(outer_screen):
         if user_input in bindings["movements"]:
             try:
                 bindings["movements"][user_input](game.grid)
-            except (OutOfBoundsError, CollisionError):
+            except (CollisionError, OutOfBoundsError):
                 continue
         if user_input in bindings["rotations"]:
-            bindings["rotations"][user_input](game.block, game.grid)
+            bindings["rotations"][user_input](game.grid)

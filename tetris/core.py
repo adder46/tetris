@@ -212,7 +212,7 @@ class Game:
         if self.counter == 5:
             try:
                 self.block.move_down(self.grid)
-            except (OutOfBoundsError, CollisionError):
+            except (CollisionError, OutOfBoundsError):
                 try:
                     self.block.land(self.grid)
                 except GameOverError:
