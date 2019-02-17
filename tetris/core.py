@@ -9,12 +9,12 @@ from tetris.blocks import BLOCKS
 
 COLOURS = {
     "I": 1,
-    "O": 3,
-    "T": 4,
-    "L": 5,
-    "J": 7,
-    "S": 2,
-    "Z": 6
+    "O": 2,
+    "T": 3,
+    "L": 4,
+    "J": 5,
+    "S": 6,
+    "Z": 7
 }
 
 
@@ -37,52 +37,34 @@ class Block:
                     grid[rowidx + self.topleft[0]][colidx + self.topleft[1] // 2][1] = self.colour
 
     def move_left(self, grid):
-        if self.is_vertical_I_tetromino():
-            boundary = -3 
-        else:
-            boundary = 1
-
-        if self.topleft[1] <= boundary:
-            raise OutOfBoundsError
-
         for rowidx, row in enumerate(self.shape):
             for colidx, col in enumerate(row):
                 if self.shape[rowidx][colidx] != 0:
+                    if colidx + (self.topleft[1] // 2) - 1 < 0:
+                        raise OutOfBoundsError
                     if grid[rowidx + self.topleft[0]][colidx + (self.topleft[1] // 2) - 1][0] != 0:
                         raise CollisionError
 
         self.topleft[1] -= 2
 
     def move_right(self, grid):
-        if self.is_horizontal_I_tetromino():
-            boundary = 15
-        else:
-            boundary = 16
-
-        if self.topleft[1] + len(self.shape[0]) - 1 >= boundary:
-            raise OutOfBoundsError
-
         for rowidx, row in enumerate(self.shape):
             for colidx, col in enumerate(row):
                 if self.shape[rowidx][colidx] != 0:
+                    if colidx + (self.topleft[1] // 2) + 1 >= len(grid[0]):
+                        raise OutOfBoundsError
                     if grid[rowidx + self.topleft[0]][colidx + (self.topleft[1] // 2) + 1][0] != 0:
                         raise CollisionError
 
         self.topleft[1] += 2
 
     def move_down(self, grid):
-        if self.is_horizontal_I_tetromino():
-            boundary = 17
-        else:
-            boundary = 16
-
-        if self.topleft[0] >= boundary - len(self.shape):
-            raise OutOfBoundsError
-
         for rowidx, row in enumerate(self.shape):
             for colidx, col in enumerate(row):
                 if self.shape[rowidx][colidx] != 0:
-                    if grid[rowidx + self.topleft[0] + 1][colidx + self.topleft[1] // 2][0] != 0:
+                    if rowidx + self.topleft[0] + 1 >= len(grid):
+                        raise OutOfBoundsError
+                    elif grid[rowidx + self.topleft[0] + 1][colidx + (self.topleft[1] // 2)][0] != 0:
                         raise CollisionError
 
         self.topleft[0] += 1
