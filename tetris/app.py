@@ -51,7 +51,6 @@ async def main(outer_screen):
 
     while True:
         inner_screen.erase()
-
         border_screen.box(0, 0)
 
         user_interface.renderer.render_landed_blocks(game.grid)      
@@ -77,4 +76,7 @@ async def main(outer_screen):
             except (CollisionError, OutOfBoundsError):
                 continue
         if user_input in bindings["rotations"]:
-            bindings["rotations"][user_input](game.grid)
+            try:
+                bindings["rotations"][user_input](game.grid)
+            except (CollisionError, OutOfBoundsError):
+                continue
