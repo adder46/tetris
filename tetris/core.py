@@ -131,9 +131,19 @@ class Game:
         self.screen = screen
         self.user_interface = user_interface
         self.block = Block()
-        self.grid = collections.deque([[[0, None] for i in range(10)] for j in range(16)], maxlen=16)
+        self.grid = collections.deque(
+            [[[0, None] for i in range(10)] for j in range(16)],
+            maxlen=16
+        )
         self.counter = 0
         self.score = 0
+
+    def clear_rows(self):
+        for rowidx, row in enumerate(self.grid.copy()):
+            if all(x[0] == 1 for x in row):
+                self.grid.remove(row)
+                self.grid.insert(0, [[0, None] for i in range(10)])
+                self.score += 10
 
     async def handle_falling(self):
         self.counter += 1
@@ -167,13 +177,6 @@ class Game:
                 continue
             if ord("p") == user_input:
                 break
-
-    def clear_rows(self):
-        for rowidx, row in enumerate(self.grid.copy()):
-            if all(x[0] == 1 for x in row):
-                self.grid.remove(row)
-                self.grid.insert(0, [[0, None] for i in range(10)])
-                self.score += 10
 
 class OutOfBoundsError(Exception):
     pass
