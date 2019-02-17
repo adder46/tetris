@@ -2,8 +2,6 @@
 
 Classic tetris game implementation written in Python using curses.
 
-![screenshot](screenshot.png)
-
 ## installing tetris
 
 Make sure you have `git`, `pip` and up-to-date `setuptools`:
