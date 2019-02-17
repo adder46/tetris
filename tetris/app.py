@@ -33,7 +33,7 @@ async def main(outer_screen):
     inner_screen.keypad(True)
 
     user_interface = UserInterface(inner_screen)
-    game = Game(inner_screen)
+    game = Game(inner_screen, user_interface)
 
     bindings = {
         "controls": {
@@ -53,8 +53,7 @@ async def main(outer_screen):
     }
 
     while True:
-        for screen in (outer_screen, border_screen, inner_screen):
-            screen.erase()
+        inner_screen.erase()
 
         border_screen.box(0, 0)
 
@@ -72,7 +71,7 @@ async def main(outer_screen):
         for screen in (outer_screen, border_screen, inner_screen):
             screen.refresh()
 
-        game.handle_falling()
+        await game.handle_falling()
         game.clear_rows()
 
         try:
@@ -81,7 +80,7 @@ async def main(outer_screen):
             continue
 
         if user_input in bindings["controls"]:
-            bindings["controls"][user_input]()
+            await bindings["controls"][user_input]()
         if user_input in bindings["movements"]:
             try:
                 bindings["movements"][user_input](game.grid)

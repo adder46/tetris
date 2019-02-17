@@ -48,6 +48,27 @@ class UserInterface:
         x = (curses.COLS // 2 - (INNER_SCREEN_WIDTH // 2)) - 1
         screen.addstr(y, x, f" SCORE: {score} ", curses.A_BOLD)
 
+    async def display_game_over_screen(self, game):
+        """
+        Displays game over screen and waits for user input.
+        If the input are keys "q" or "r", it quits or restarts the game, respectively.
+        """
+        self.screen.erase()
+        self.screen.addstr(self.lines // 2 - 1, self.cols // 2 - 4, "GAME OVER")
+        self.screen.addstr(self.lines // 2, self.cols // 2 - 4, f"SCORE: {game.score}")
+        self.screen.addstr(self.lines // 2 + 2, self.cols // 2 - 8, "[r]estart [q]uit")
+        self.screen.refresh()
+        while True:
+            try:
+                user_input = self.screen.getch()
+            except curses.error:
+                await trio.sleep(0.1)
+                continue
+            if ord("q") == user_input:
+                sys.exit()
+            if ord("r") == user_input:
+                game.restart()
+                break
 
 class Renderer:
 

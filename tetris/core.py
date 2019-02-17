@@ -23,10 +23,13 @@ class Block:
     def __init__(self):
         self.letter = random.choice(list(BLOCKS.keys()))
         self.shape = BLOCKS[self.letter][random.randint(0, len(BLOCKS[self.letter]) - 1)]
-        self.topleft = [1, 4]
+        self.topleft = [0, 6]
         self.colour = curses.color_pair(COLOURS[self.letter])
 
     def land(self, grid):
+        if self.topleft[0] <= 0:
+            raise GameOverError
+
         for rowidx, row in enumerate(self.shape):
             for colidx, col in enumerate(row):
                 if self.shape[rowidx][colidx] != 0:
@@ -76,10 +79,10 @@ class Block:
         if self.topleft[0] >= boundary - len(self.shape):
             raise OutOfBoundsError
 
-        for row in range(len(self.shape)):
-            for col in range(len(self.shape[row])):
-                if self.shape[row][col] != 0:
-                    if grid[row + self.topleft[0] + 1][col + self.topleft[1] // 2][0] != 0:
+        for rowidx, row in enumerate(self.shape):
+            for colidx, col in enumerate(row):
+                if self.shape[rowidx][colidx] != 0:
+                    if grid[rowidx + self.topleft[0] + 1][colidx + self.topleft[1] // 2][0] != 0:
                         raise CollisionError
 
         self.topleft[0] += 1
@@ -102,7 +105,20 @@ class Block:
         for rowidx, row in enumerate(potential_shape):
             for colidx, col in enumerate(row):
                 if potential_shape[rowidx][colidx] != 0:
-                    if grid[rowidx + self.topleft[0]][colidx + (self.topleft[1] // 2) + 1][0] != 0:
+                    try:
+                        next_step_right = grid[rowidx + self.topleft[0]][colidx + (self.topleft[1] // 2) + 1][0]
+                    except IndexError:
+                        next_step_right = grid[rowidx + self.topleft[0]][colidx + (self.topleft[1] // 2)][0]
+                    if next_step_right != 0:
+                        return
+                    next_step_left = colidx + (self.topleft[1] // 2) - 1
+                    if next_step_left == -1: 
+                        next_step_left = 0
+                    if grid[rowidx + self.topleft[0]][next_step_left][0] != 0:
+                        return
+                    if grid[rowidx + self.topleft[0] + 1][colidx + (self.topleft[1] // 2)][0] != 0:
+                        return
+                    if grid[rowidx + self.topleft[0] - 1][colidx + (self.topleft[1] // 2)][0] != 0:
                         return
                     if colidx + self.topleft[1] >= boundary:
                         return
@@ -115,6 +131,9 @@ class Block:
         current_rotation = BLOCKS[self.letter].index(self.shape)
         next_rotation = current_rotation - 1
 
+        if next_rotation <= -1:
+            next_rotation = len(BLOCKS[self.letter]) - 1
+
         if self.is_horizontal_I_tetromino() or self.is_vertical_I_tetromino():
             boundary = 16
         else:
@@ -125,15 +144,26 @@ class Block:
         for rowidx, row in enumerate(potential_shape):
             for colidx, col in enumerate(row):
                 if potential_shape[rowidx][colidx] != 0:
-                    if grid[rowidx + self.topleft[0]][colidx + (self.topleft[1] // 2) - 1][0] != 0:
+                    try:
+                        next_step_right = grid[rowidx + self.topleft[0]][colidx + (self.topleft[1] // 2) + 1][0]
+                    except IndexError:
+                        next_step_right = grid[rowidx + self.topleft[0]][colidx + (self.topleft[1] // 2)][0]
+                    if next_step_right != 0:
+                        return
+                    next_step_left = colidx + (self.topleft[1] // 2) - 1
+                    if next_step_left == -1: 
+                        next_step_left = 0
+                    if grid[rowidx + self.topleft[0]][next_step_left][0] != 0:
+                        return
+                    if grid[rowidx + self.topleft[0] + 1][colidx + (self.topleft[1] // 2)][0] != 0:
+                        return
+                    if grid[rowidx + self.topleft[0] - 1][colidx + (self.topleft[1] // 2)][0] != 0:
                         return
                     if colidx + self.topleft[1] >= boundary:
                         return
                     if colidx + self.topleft[1] <= -1:
                         return
 
-        if next_rotation <= -1:
-            next_rotation = len(BLOCKS[self.letter]) - 1
         self.shape = BLOCKS[self.letter][next_rotation]
 
     def move_all_the_way_down(self, grid):
@@ -152,26 +182,49 @@ class Block:
 
 class Game:
 
-    def __init__(self, screen):
+    def __init__(self, screen, user_interface):
         self.screen = screen
+        self.user_interface = user_interface
         self.block = Block()
         self.grid = collections.deque([[[0, None] for i in range(10)] for j in range(16)], maxlen=16)
-#        self.grid = collections.deque([[[1, None], [1, None], [1, None], [1, None], [1, None], [1, None], [1, None], [1, None], [1, None], [1, None]], [[1, None], [1, None], [1, None], [1, None], [1, None], [1, None], [1, None], [1, None], [1, None], [1, None]], [[1, None], [1, None], [1, None], [1, None], [1, None], [1, None], [1, None], [1, None], [1, None], [1, None]], [[1, None], [1, None], [1, None], [1, None], [1, None], [1, None], [1, None], [1, None], [1, None], [1, None]], [[1, None], [1, None], [1, None], [1, None], [1, None], [1, None], [1, None], [1, None], [1, None], [1, None]], [[1, None], [1, None], [1, None], [1, None], [1, None], [1, None], [1, None], [1, None], [1, None], [1, None]], [[1, None], [1, None], [1, None], [1, None], [1, None], [1, None], [1, None], [1, None], [1, None], [1, None]], [[1, None], [1, None], [1, None], [1, None], [1, None], [1, None], [1, None], [1, None], [1, None], [1, None]], [[1, None], [1, None], [1, None], [1, None], [1, None], [1, None], [1, None], [1, None], [1, None], [1, None]], [[1, None], [1, None], [1, None], [1, None], [1, None], [1, None], [1, None], [1, None], [1, None], [1, None]], [[1, None], [1, None], [1, None], [1, None], [1, None], [1, None], [1, None], [1, None], [1, None], [1, None]], [[1, None], [1, None], [1, None], [1, None], [1, None], [1, None], [1, None], [1, None], [1, None], [1, None]], [[1, None], [1, None], [1, None], [1, None], [1, None], [1, None], [1, None], [1, None], [1, None], [1, None]], [[1, None], [1, None], [1, None], [1, None], [1, None], [1, None], [1, None], [1, None], [1, None], [1, None]], [[1, None], [1, None], [1, None], [1, None], [1, None], [1, None], [1, None], [1, None], [1, None], [1, None]], [[1, None], [1, None], [1, None], [1, None], [1, None], [1, None], [1, None], [1, None], [1, None], [0, None]]]
-#)
+        # self.grid = collections.deque([[[0, None], [0, None], [0, None], [0, None], [0, None], [0, None], [0, None], [0, None], [0, None], [0, None]],
+        # [[0, None], [0, None], [0, None], [0, None], [0, None], [0, None], [0, None], [0, None], [0, None], [0, None]],
+        # [[0, None], [0, None], [0, None], [0, None], [0, None], [0, None], [0, None], [0, None], [0, None], [0, None]],
+        # [[0, None], [0, None], [0, None], [0, None], [0, None], [0, None], [0, None], [0, None], [0, None], [0, None]],
+        # [[0, None], [0, None], [0, None], [0, None], [0, None], [0, None], [0, None], [0, None], [0, None], [0, None]],
+        # [[0, None], [0, None], [0, None], [0, None], [0, None], [0, None], [0, None], [0, None], [0, None], [0, None]],
+        # [[0, None], [0, None], [0, None], [0, None], [0, None], [0, None], [0, None], [0, None], [0, None], [0, None]],
+        # [[0, None], [0, None], [0, None], [0, None], [0, None], [0, None], [0, None], [0, None], [0, None], [0, None]],
+        # [[0, None], [0, None], [0, None], [1, None], [0, None], [0, None], [1, None], [0, None], [0, None], [0, None]],
+        # [[0, None], [0, None], [0, None], [1, None], [0, None], [0, None], [1, None], [0, None], [0, None], [0, None]],
+        # [[0, None], [0, None], [0, None], [1, None], [0, None], [0, None], [1, None], [0, None], [0, None], [0, None]],
+        # [[0, None], [0, None], [0, None], [1, None], [0, None], [0, None], [1, None], [0, None], [0, None], [0, None]],
+        # [[0, None], [0, None], [0, None], [1, None], [0, None], [0, None], [1, None], [0, None], [0, None], [0, None]],
+        # [[0, None], [0, None], [0, None], [1, None], [0, None], [0, None], [1, None], [0, None], [0, None], [0, None]],
+        # [[0, None], [0, None], [0, None], [1, None], [0, None], [0, None], [1, None], [0, None], [0, None], [0, None]],
+        # [[0, None], [0, None], [0, None], [1, None], [0, None], [0, None], [1, None], [0, None], [0, None], [0, None]]])
         self.counter = 0
         self.score = 0
 
-    def handle_falling(self):
+
+    async def handle_falling(self):
         self.counter += 1
         if self.counter == 5:
             try:
                 self.block.move_down(self.grid)
             except (OutOfBoundsError, CollisionError):
-                self.block.land(self.grid)
-                self.block = Block()
-                return
+                try:
+                    self.block.land(self.grid)
+                except GameOverError:
+                    await self.user_interface.display_game_over_screen(self)
+                else:
+                    self.block = Block()
+                    return
             finally:
                 self.counter = 0
+
+    def restart(self):
+        self.__init__(self.screen, self.user_interface)
 
     async def pause(self):
         """
@@ -200,3 +253,5 @@ class OutOfBoundsError(Exception):
 class CollisionError(Exception):
     pass
 
+class GameOverError(Exception):
+    pass
