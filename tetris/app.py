@@ -24,7 +24,7 @@ async def main(outer_screen):
             (curses.COLS // 2 - (INNER_SCREEN_WIDTH // 2)) - 1
         )
     else:
-        sys.exit(f"fatal: minimum terminal size needed [{INNER_SCREEN_HEIGHT}x{INNER_SCREEN_WIDTH}]")
+        sys.exit(f"fatal: minimum terminal size needed [{1 + INNER_SCREEN_HEIGHT + 1 + 1}x{1 + INNER_SCREEN_WIDTH + 1}]")
 
     inner_screen.timeout(100)
     inner_screen.keypad(True)
@@ -38,14 +38,14 @@ async def main(outer_screen):
             ord("q"): sys.exit,
         },
         "movements": {
-            curses.KEY_LEFT: lambda grid: game.block.move_left(grid),
-            curses.KEY_RIGHT: lambda grid: game.block.move_right(grid),
+            curses.KEY_LEFT: lambda grid: game.block.move_sideways(grid, "left"),
+            curses.KEY_RIGHT: lambda grid: game.block.move_sideways(grid, "right"),
             curses.KEY_DOWN: lambda grid: game.block.move_down(grid),
             ord("s"): lambda grid: game.block.move_all_the_way_down(grid)
         },
         "rotations": {
-            ord("a"): lambda grid: game.block.rotate_left(grid),
-            ord("d"): lambda grid: game.block.rotate_right(grid),
+            ord("a"): lambda grid: game.block.rotate(grid, "left"),
+            ord("d"): lambda grid: game.block.rotate(grid, "right"),
         }
     }
 

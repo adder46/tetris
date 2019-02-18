@@ -1,14 +1,15 @@
 import curses
 import sys
 
-import q
 import trio
+
 
 GRID_WIDTH = 10
 GRID_HEIGHT = 16
 
 INNER_SCREEN_WIDTH = GRID_WIDTH*2
 INNER_SCREEN_HEIGHT = GRID_HEIGHT
+
 
 class UserInterface:
 
@@ -97,4 +98,4 @@ class Renderer:
         for rowidx, row in enumerate(block.shape):
             for colidx, col in enumerate(row):
                 if block.shape[rowidx][colidx] != 0:
-                    self._better_addstr(rowidx + block.topleft[0], (colidx * 2) + block.topleft[1], "██", block.colour)
+                    self._better_addstr(rowidx + block.topleft[0], (colidx * 2) + block.topleft[1] * 2, "██", block.colour)
