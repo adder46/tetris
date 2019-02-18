@@ -24,7 +24,7 @@ class UserInterface:
         """
         Helper method to ensure correct terminal size
         """
-        if curses.LINES >= INNER_SCREEN_HEIGHT and curses.COLS >= INNER_SCREEN_WIDTH:
+        if curses.LINES >= 24 and curses.COLS >= 80:
             return True
         return False
 

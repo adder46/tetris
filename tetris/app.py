@@ -24,7 +24,7 @@ async def main(outer_screen):
             (curses.COLS // 2 - (INNER_SCREEN_WIDTH // 2)) - 1
         )
     else:
-        sys.exit(f"fatal: minimum terminal size needed [{1 + INNER_SCREEN_HEIGHT + 1 + 1}x{1 + INNER_SCREEN_WIDTH + 1}]")
+        sys.exit(f"fatal: minimum terminal size needed [24x80]")
 
     inner_screen.timeout(100)
     inner_screen.keypad(True)

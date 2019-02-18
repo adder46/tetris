@@ -2,6 +2,8 @@ import random
 import curses
 import collections
 
+import q
+
 from tetris.blocks import BLOCKS
 
 
@@ -41,16 +43,16 @@ class Block:
         for rowidx, row in enumerate(self.shape):
             for colidx, col in enumerate(row):
                 if self.shape[rowidx][colidx] != 0:
-                    grid[rowidx + self.topleft[0]][colidx + self.topleft[1] ][0] = self.shape[rowidx][colidx]
-                    grid[rowidx + self.topleft[0]][colidx + self.topleft[1] ][1] = self.colour
+                    grid[rowidx + self.topleft[0]][colidx + self.topleft[1]][0] = self.shape[rowidx][colidx]
+                    grid[rowidx + self.topleft[0]][colidx + self.topleft[1]][1] = self.colour
 
     def move_sideways(self, grid, direction):
         for rowidx, row in enumerate(self.shape):
             for colidx, col in enumerate(row):
                 if self.shape[rowidx][colidx] != 0:
-                    if colidx + (self.topleft[1] ) + DIRECTIONS[direction][0][1] not in range(len(grid[0])):
+                    if colidx + (self.topleft[1]) + DIRECTIONS[direction][0][1] not in range(len(grid[0])):
                         raise OutOfBoundsError         
-                    if grid[rowidx + self.topleft[0]][colidx + (self.topleft[1] ) + DIRECTIONS[direction][0][1]][0] != 0:
+                    if grid[rowidx + self.topleft[0]][colidx + (self.topleft[1]) + DIRECTIONS[direction][0][1]][0] != 0:
                         raise CollisionError
 
         self.topleft[1] += DIRECTIONS[direction][1]
@@ -61,7 +63,7 @@ class Block:
                 if self.shape[rowidx][colidx] != 0:
                     if rowidx + self.topleft[0] + 1 >= len(grid):
                         raise OutOfBoundsError
-                    elif grid[rowidx + self.topleft[0] + 1][colidx + (self.topleft[1] )][0] != 0:
+                    elif grid[rowidx + self.topleft[0] + 1][colidx + (self.topleft[1])][0] != 0:
                         raise CollisionError
 
         self.topleft[0] += 1
@@ -77,28 +79,19 @@ class Block:
         current_rotation = BLOCKS[self.letter].index(self.shape)
         next_rotation = current_rotation + ROTATIONS[direction]
 
-        if direction == "right":
-            try:
-                potential_shape = BLOCKS[self.letter][next_rotation]
-            except IndexError:
-                next_rotation = 0
-                potential_shape = BLOCKS[self.letter][next_rotation]        
-        elif direction == "left":
-            if next_rotation <= -1:
-                next_rotation = len(BLOCKS[self.letter]) - 1
-            potential_shape = BLOCKS[self.letter][next_rotation]
+        potential_shape = BLOCKS[self.letter][next_rotation % len(BLOCKS[self.letter])]
 
         for rowidx, row in enumerate(potential_shape):
             for colidx, col in enumerate(row):
                 if potential_shape[rowidx][colidx] != 0:
-                    if colidx + (self.topleft[1] ) not in range(len(grid[0])):
+                    if colidx + self.topleft[1] not in range(len(grid[0])):
                         raise OutOfBoundsError
                     if rowidx + self.topleft[0] >= len(grid):
                         raise OutOfBoundsError
-                    if grid[rowidx + self.topleft[0]][colidx + (self.topleft[1] )][0] != 0:
+                    if grid[rowidx + self.topleft[0]][colidx + (self.topleft[1])][0] != 0:
                         raise CollisionError
 
-        self.shape = BLOCKS[self.letter][next_rotation]
+        self.shape = potential_shape
 
 
 class Game:
