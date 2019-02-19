@@ -16,14 +16,16 @@ COLOURS = {
 }
 
 DIRECTIONS = {
-    "right": ((0,1), 1),
-    "left": ((0,-1), -1)
-}
-
-ROTATIONS = {
+    # "right": ((0,1), 1),
+    # "left": ((0,-1), -1)
     "right": 1,
     "left": -1
 }
+
+# ROTATIONS = {
+#     "right": 1,
+#     "left": -1
+# }
 
 
 class Block:
@@ -48,12 +50,12 @@ class Block:
         for rowidx, row in enumerate(self.shape):
             for colidx, col in enumerate(row):
                 if self.shape[rowidx][colidx] != 0:
-                    if colidx + self.topleft[1] + DIRECTIONS[direction][0][1] not in range(len(grid[0])):
+                    if colidx + self.topleft[1] + DIRECTIONS[direction] not in range(len(grid[0])):
                         raise OutOfBoundsError         
-                    if grid[rowidx + self.topleft[0]][colidx + self.topleft[1] + DIRECTIONS[direction][0][1]][0] != 0:
+                    if grid[rowidx + self.topleft[0]][colidx + self.topleft[1] + DIRECTIONS[direction]][0] != 0:
                         raise CollisionError
 
-        self.topleft[1] += DIRECTIONS[direction][1]
+        self.topleft[1] += DIRECTIONS[direction]
 
     def move_down(self, grid):
         for rowidx, row in enumerate(self.shape):
@@ -75,7 +77,7 @@ class Block:
 
     def rotate(self, grid, direction):
         current_rotation = BLOCKS[self.letter].index(self.shape)
-        next_rotation = current_rotation + ROTATIONS[direction]
+        next_rotation = current_rotation + DIRECTIONS[direction]
 
         potential_shape = BLOCKS[self.letter][next_rotation % len(BLOCKS[self.letter])]
 
