@@ -16,16 +16,9 @@ COLOURS = {
 }
 
 DIRECTIONS = {
-    # "right": ((0,1), 1),
-    # "left": ((0,-1), -1)
     "right": 1,
     "left": -1
 }
-
-# ROTATIONS = {
-#     "right": 1,
-#     "left": -1
-# }
 
 
 class Block:
