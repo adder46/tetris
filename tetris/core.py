@@ -105,7 +105,7 @@ class Game:
         self.score = 0
 
     def clear_rows(self):
-        for rowidx, row in enumerate(self.grid.copy()):
+        for row in self.grid.copy():
             if all(x[0] == 1 for x in row):
                 self.grid.remove(row)
                 self.grid.insert(0, [[0, None] for i in range(10)])
