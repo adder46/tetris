@@ -33,6 +33,7 @@ class UserInterface:
         """
         Helper method to make curses colour pairs
         """
+        curses.init_color(curses.COLOR_YELLOW, 1000, 1000, 0)
         curses.init_pair(1, curses.COLOR_RED, curses.COLOR_RED)
         curses.init_pair(2, curses.COLOR_GREEN, curses.COLOR_GREEN)
         curses.init_pair(3, curses.COLOR_BLUE, curses.COLOR_BLUE)

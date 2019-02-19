@@ -2,19 +2,17 @@ import random
 import curses
 import collections
 
-import q
-
 from tetris.blocks import BLOCKS
 
 
 COLOURS = {
-    "I": 1,
-    "O": 2,
-    "T": 3,
-    "L": 4,
-    "J": 5,
-    "S": 6,
-    "Z": 7
+    "I": curses.COLOR_YELLOW,
+    "O": curses.COLOR_BLUE,
+    "T": curses.COLOR_GREEN,
+    "L": curses.COLOR_RED,
+    "J": curses.COLOR_MAGENTA,
+    "S": curses.COLOR_CYAN,
+    "Z": curses.COLOR_WHITE
 }
 
 DIRECTIONS = {
@@ -50,9 +48,9 @@ class Block:
         for rowidx, row in enumerate(self.shape):
             for colidx, col in enumerate(row):
                 if self.shape[rowidx][colidx] != 0:
-                    if colidx + (self.topleft[1]) + DIRECTIONS[direction][0][1] not in range(len(grid[0])):
+                    if colidx + self.topleft[1] + DIRECTIONS[direction][0][1] not in range(len(grid[0])):
                         raise OutOfBoundsError         
-                    if grid[rowidx + self.topleft[0]][colidx + (self.topleft[1]) + DIRECTIONS[direction][0][1]][0] != 0:
+                    if grid[rowidx + self.topleft[0]][colidx + self.topleft[1] + DIRECTIONS[direction][0][1]][0] != 0:
                         raise CollisionError
 
         self.topleft[1] += DIRECTIONS[direction][1]
@@ -63,7 +61,7 @@ class Block:
                 if self.shape[rowidx][colidx] != 0:
                     if rowidx + self.topleft[0] + 1 >= len(grid):
                         raise OutOfBoundsError
-                    elif grid[rowidx + self.topleft[0] + 1][colidx + (self.topleft[1])][0] != 0:
+                    elif grid[rowidx + self.topleft[0] + 1][colidx + self.topleft[1]][0] != 0:
                         raise CollisionError
 
         self.topleft[0] += 1
@@ -88,7 +86,7 @@ class Block:
                         raise OutOfBoundsError
                     if rowidx + self.topleft[0] >= len(grid):
                         raise OutOfBoundsError
-                    if grid[rowidx + self.topleft[0]][colidx + (self.topleft[1])][0] != 0:
+                    if grid[rowidx + self.topleft[0]][colidx + self.topleft[1]][0] != 0:
                         raise CollisionError
 
         self.shape = potential_shape
