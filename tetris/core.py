@@ -1,6 +1,6 @@
-import random
-import curses
 import collections
+import curses
+import random
 
 from tetris.blocks import BLOCKS
 
