@@ -118,7 +118,6 @@ class Game:
                     await self.user_interface.display_game_over_screen(self)
                 else:
                     self.block = Block()
-                    return
             finally:
                 self.counter = 0
 
