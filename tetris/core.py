@@ -1,6 +1,7 @@
-import collections
 import curses
 import random
+
+import trio
 
 from tetris.blocks import BLOCKS
 
@@ -34,29 +35,32 @@ class Block:
             raise GameOverError
 
         for rowidx, row in enumerate(self.shape):
-            for colidx, col in enumerate(row):
+            for colidx, _ in enumerate(row):
                 if self.shape[rowidx][colidx] != 0:
-                    grid[rowidx + self.topleft[0]][colidx + self.topleft[1]][0] = self.shape[rowidx][colidx]
-                    grid[rowidx + self.topleft[0]][colidx + self.topleft[1]][1] = self.colour
+                    y_coord, x_coord = self.topleft
+                    grid[rowidx + y_coord][colidx + x_coord][0] = self.shape[rowidx][colidx]
+                    grid[rowidx + y_coord][colidx + x_coord][1] = self.colour
 
     def move_sideways(self, grid, direction):
         for rowidx, row in enumerate(self.shape):
-            for colidx, col in enumerate(row):
+            for colidx, _ in enumerate(row):
                 if self.shape[rowidx][colidx] != 0:
-                    if colidx + self.topleft[1] + DIRECTIONS[direction] not in range(len(grid[0])):
-                        raise OutOfBoundsError         
-                    if grid[rowidx + self.topleft[0]][colidx + self.topleft[1] + DIRECTIONS[direction]][0] != 0:
+                    y_coord, x_coord = self.topleft
+                    if colidx + x_coord + DIRECTIONS[direction] not in range(len(grid[0])):
+                        raise OutOfBoundsError
+                    if grid[rowidx + y_coord][colidx + x_coord + DIRECTIONS[direction]][0] != 0:
                         raise CollisionError
 
         self.topleft[1] += DIRECTIONS[direction]
 
     def move_down(self, grid):
         for rowidx, row in enumerate(self.shape):
-            for colidx, col in enumerate(row):
+            for colidx, _ in enumerate(row):
                 if self.shape[rowidx][colidx] != 0:
-                    if rowidx + self.topleft[0] + 1 >= len(grid):
+                    y_coord, x_coord = self.topleft
+                    if rowidx + y_coord + 1 >= len(grid):
                         raise OutOfBoundsError
-                    elif grid[rowidx + self.topleft[0] + 1][colidx + self.topleft[1]][0] != 0:
+                    elif grid[rowidx + y_coord + 1][colidx + x_coord][0] != 0:
                         raise CollisionError
 
         self.topleft[0] += 1
@@ -75,7 +79,7 @@ class Block:
         potential_shape = BLOCKS[self.letter][next_rotation % len(BLOCKS[self.letter])]
 
         for rowidx, row in enumerate(potential_shape):
-            for colidx, col in enumerate(row):
+            for colidx, _ in enumerate(row):
                 if potential_shape[rowidx][colidx] != 0:
                     if colidx + self.topleft[1] not in range(len(grid[0])):
                         raise OutOfBoundsError
@@ -95,7 +99,7 @@ class Game:
         self.block = Block()
         self.grid = [
             [[0, None] for i in range(10)] for j in range(16)
-        ]         
+        ]
         self.counter = 0
         self.score = 0
 

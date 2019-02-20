@@ -46,9 +46,9 @@ class UserInterface:
         """
         Displays current score at the lower left-hand side of the screen.
         """
-        y = (curses.LINES // 2 - (INNER_SCREEN_HEIGHT // 2)) + self.lines + 1
-        x = (curses.COLS // 2 - (INNER_SCREEN_WIDTH // 2)) - 1
-        screen.addstr(y, x, f" SCORE: {score} ", curses.A_BOLD)
+        y_coord = (curses.LINES // 2 - (INNER_SCREEN_HEIGHT // 2)) + self.lines + 1
+        x_coord = (curses.COLS // 2 - (INNER_SCREEN_WIDTH // 2)) - 1
+        screen.addstr(y_coord, x_coord, f" SCORE: {score} ", curses.A_BOLD)
 
     async def display_game_over_screen(self, game):
         """
@@ -77,26 +77,27 @@ class Renderer:
     def __init__(self, screen):
         self.screen = screen
 
-    def _better_addstr(self, y, x, text, color_info_stuff):
+    def _addstr(self, y_coord, x_coord, text, color_info_stuff):
         screen_height, screen_width = self.screen.getmaxyx()
-        if x + len(text) == screen_width and y == screen_height-1:
+        if x_coord + len(text) == screen_width and y_coord == screen_height-1:
             # https://stackoverflow.com/q/36387625
             try:
-                self.screen.addstr(y, x, text, color_info_stuff)
+                self.screen.addstr(y_coord, x_coord, text, color_info_stuff)
             except curses.error:
                 pass
         else:
-            self.screen.addstr(y, x, text, color_info_stuff)
+            self.screen.addstr(y_coord, x_coord, text, color_info_stuff)
 
 
     def render_landed_blocks(self, grid):
         for rowidx, row in enumerate(grid):
             for colidx, col in enumerate(row):
                 if grid[rowidx][colidx][0] != 0:
-                    self._better_addstr(rowidx, colidx * 2, "██", col[1] if col[1] is not None else curses.COLOR_BLACK)
+                    self._addstr(rowidx, colidx * 2, "██", col[1])
 
     def render_current_block(self, block):
         for rowidx, row in enumerate(block.shape):
-            for colidx, col in enumerate(row):
+            for colidx, _ in enumerate(row):
                 if block.shape[rowidx][colidx] != 0:
-                    self._better_addstr(rowidx + block.topleft[0], (colidx * 2) + block.topleft[1] * 2, "██", block.colour)
+                    y_coord, x_coord = block.topleft
+                    self._addstr(rowidx + y_coord, (colidx * 2) + x_coord * 2, "██", block.colour)

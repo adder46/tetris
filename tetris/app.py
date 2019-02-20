@@ -53,8 +53,8 @@ async def main(outer_screen):
         inner_screen.erase()
         border_screen.box(0, 0)
 
-        user_interface.renderer.render_landed_blocks(game.grid)      
-        user_interface.renderer.render_current_block(game.block)        
+        user_interface.renderer.render_landed_blocks(game.grid)
+        user_interface.renderer.render_current_block(game.block)
         user_interface.display_score(outer_screen, game.score)
 
         for screen in (outer_screen, border_screen, inner_screen):
