@@ -81,11 +81,12 @@ class Block:
         for rowidx, row in enumerate(potential_shape):
             for colidx, _ in enumerate(row):
                 if potential_shape[rowidx][colidx] != 0:
-                    if colidx + self.topleft[1] not in range(len(grid[0])):
+                    y_coord, x_coord = self.topleft
+                    if colidx + x_coord not in range(len(grid[0])):
                         raise OutOfBoundsError
-                    if rowidx + self.topleft[0] >= len(grid):
+                    if rowidx + y_coord >= len(grid):
                         raise OutOfBoundsError
-                    if grid[rowidx + self.topleft[0]][colidx + self.topleft[1]][0] != 0:
+                    if grid[rowidx + y_coord][colidx + x_coord][0] != 0:
                         raise CollisionError
 
         self.shape = potential_shape
