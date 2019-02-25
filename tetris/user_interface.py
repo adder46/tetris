@@ -88,7 +88,6 @@ class Renderer:
         else:
             self.screen.addstr(y_coord, x_coord, text, color_info_stuff)
 
-
     def render_landed_blocks(self, grid):
         for rowidx, row in enumerate(grid):
             for colidx, col in enumerate(row):
