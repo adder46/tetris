@@ -74,7 +74,7 @@ class Renderer:
     def _addstr(self, y_coord, x_coord, text, color_info_stuff):
         """
         Works around curses' limitation of drawing at bottom right corner
-        of the screem, as seen on https://stackoverflow.com/q/36387625
+        of the screen, as seen on https://stackoverflow.com/q/36387625
         """
         screen_height, screen_width = self.screen.getmaxyx()
         if x_coord + len(text) == screen_width and y_coord == screen_height-1:
