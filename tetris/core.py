@@ -50,8 +50,8 @@ class Block:
 
     def move_sideways(self, grid, direction):
         """
-        Moves a tetromino one step left or right whilst making sure
-        it does not go out of bounds or collide with another tetromino.
+        Moves a tetromino one step left or right if another tetromino is not in
+        its way, whilst making sure it does not go out of bounds at the same time.
         """
         for rowidx, row in enumerate(self.shape):
             for colidx, _ in enumerate(row):
@@ -66,8 +66,8 @@ class Block:
 
     def move_down(self, grid):
         """
-        Moves a tetromino one step down whilst making sure it does
-        not go out of bounds or collide with another tetromino.
+        Moves a tetromino one step down if another tetromino is not in its way,
+        whilst making sure it does not go out of bounds at the same time.
         """
         for rowidx, row in enumerate(self.shape):
             for colidx, _ in enumerate(row):
@@ -122,7 +122,7 @@ class Game:
         self.user_interface = user_interface
         self.block = Block()
         self.grid = [
-            [[0, None] for i in range(GRID_WIDTH)] for j in range(GRID_HEIGHT)
+            [[0, None] for _ in range(GRID_WIDTH)] for _ in range(GRID_HEIGHT)
         ]
         self.counter = 0
         self.score = 0
