@@ -21,13 +21,16 @@ DIRECTIONS = {
     "left": -1
 }
 
+GRID_WIDTH = 10
+GRID_HEIGHT = 16
+
 
 class Block:
 
     def __init__(self):
         self.letter = random.choice(list(BLOCKS.keys()))
         self.shape = random.choice(BLOCKS[self.letter])
-        self.topleft = [0, 6]
+        self.topleft = [0, 4]
         self.colour = curses.color_pair(COLOURS[self.letter])
 
     def land(self, grid):
@@ -99,7 +102,7 @@ class Game:
         self.user_interface = user_interface
         self.block = Block()
         self.grid = [
-            [[0, None] for i in range(10)] for j in range(16)
+            [[0, None] for i in range(GRID_WIDTH)] for j in range(GRID_HEIGHT)
         ]
         self.counter = 0
         self.score = 0

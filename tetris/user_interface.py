@@ -3,11 +3,10 @@ import sys
 
 import trio
 
+from tetris.core import GRID_HEIGHT, GRID_WIDTH, COLOURS
 
-GRID_WIDTH = 10
-GRID_HEIGHT = 16
 
-INNER_SCREEN_WIDTH = GRID_WIDTH*2
+INNER_SCREEN_WIDTH = GRID_WIDTH * 2
 INNER_SCREEN_HEIGHT = GRID_HEIGHT
 
 
@@ -34,13 +33,8 @@ class UserInterface:
         Helper method to make curses colour pairs
         """
         curses.init_color(curses.COLOR_YELLOW, 1000, 1000, 0)
-        curses.init_pair(1, curses.COLOR_RED, curses.COLOR_RED)
-        curses.init_pair(2, curses.COLOR_GREEN, curses.COLOR_GREEN)
-        curses.init_pair(3, curses.COLOR_BLUE, curses.COLOR_BLUE)
-        curses.init_pair(4, curses.COLOR_YELLOW, curses.COLOR_YELLOW)
-        curses.init_pair(5, curses.COLOR_MAGENTA, curses.COLOR_MAGENTA)
-        curses.init_pair(6, curses.COLOR_CYAN, curses.COLOR_CYAN)
-        curses.init_pair(7, curses.COLOR_WHITE, curses.COLOR_WHITE)
+        for colour in COLOURS.values():
+            curses.init_pair(colour, colour, colour)
 
     def display_score(self, screen, score):
         """
@@ -99,4 +93,4 @@ class Renderer:
             for colidx, _ in enumerate(row):
                 if block.shape[rowidx][colidx] != 0:
                     y_coord, x_coord = block.topleft
-                    self._addstr(rowidx + y_coord, (colidx * 2) + x_coord * 2, "██", block.colour)
+                    self._addstr(rowidx + y_coord, (colidx + x_coord) * 2, "██", block.colour)
