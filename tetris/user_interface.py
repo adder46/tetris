@@ -72,9 +72,12 @@ class Renderer:
         self.screen = screen
 
     def _addstr(self, y_coord, x_coord, text, color_info_stuff):
+        """
+        Works around curses' limitation of drawing at bottom right corner
+        of the screem, as seen on https://stackoverflow.com/q/36387625
+        """
         screen_height, screen_width = self.screen.getmaxyx()
         if x_coord + len(text) == screen_width and y_coord == screen_height-1:
-            # https://stackoverflow.com/q/36387625
             try:
                 self.screen.addstr(y_coord, x_coord, text, color_info_stuff)
             except curses.error:
@@ -83,12 +86,18 @@ class Renderer:
             self.screen.addstr(y_coord, x_coord, text, color_info_stuff)
 
     def render_landed_blocks(self, grid):
+        """
+        Renders all the landed tetrominos.
+        """
         for rowidx, row in enumerate(grid):
             for colidx, col in enumerate(row):
                 if grid[rowidx][colidx][0] != 0:
                     self._addstr(rowidx, colidx * 2, "██", col[1])
 
     def render_current_block(self, block):
+        """
+        Renders a current tetromino.
+        """
         for rowidx, row in enumerate(block.shape):
             for colidx, _ in enumerate(row):
                 if block.shape[rowidx][colidx] != 0:

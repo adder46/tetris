@@ -34,6 +34,10 @@ class Block:
         self.colour = curses.color_pair(COLOURS[self.letter])
 
     def land(self, grid):
+        """
+        Lands a tetromino. If top left corner of the tetromino
+        is beyond upper boundary, raises GameOverError.
+        """
         if self.topleft[0] <= 0:
             raise GameOverError
 
@@ -45,6 +49,10 @@ class Block:
                     grid[rowidx + y_coord][colidx + x_coord][1] = self.colour
 
     def move_sideways(self, grid, direction):
+        """
+        Moves a tetromino one step left or right whilst making sure
+        it does not go out of bounds or collide with another tetromino.
+        """
         for rowidx, row in enumerate(self.shape):
             for colidx, _ in enumerate(row):
                 if self.shape[rowidx][colidx] != 0:
@@ -57,6 +65,10 @@ class Block:
         self.topleft[1] += DIRECTIONS[direction]
 
     def move_down(self, grid):
+        """
+        Moves a tetromino one step down whilst making sure it does
+        not go out of bounds or collide with another tetromino.
+        """
         for rowidx, row in enumerate(self.shape):
             for colidx, _ in enumerate(row):
                 if self.shape[rowidx][colidx] != 0:
@@ -69,6 +81,10 @@ class Block:
         self.topleft[0] += 1
 
     def move_all_the_way_down(self, grid):
+        """
+        Moves a tetromino all the way down until it either goes
+        out of bounds, or until another tetromino is encountered.
+        """
         while True:
             try:
                 self.move_down(grid)
@@ -76,6 +92,10 @@ class Block:
                 break
 
     def rotate(self, grid, direction):
+        """
+        Rotates a tetromino either left or right whilst making sure
+        it does not go out of bounds, or collide with another tetromino.
+        """
         current_rotation = BLOCKS[self.letter].index(self.shape)
         next_rotation = current_rotation + DIRECTIONS[direction]
 
@@ -108,13 +128,24 @@ class Game:
         self.score = 0
 
     def clear_rows(self):
+        """
+        Clears all the filled rows and prepends the grid with an empty row.
+        """
         for row in self.grid.copy():
             if all(x[0] == 1 for x in row):
                 self.grid.remove(row)
-                self.grid.insert(0, [[0, None] for i in range(10)])
+                self.grid.insert(0, [[0, None] for i in range(GRID_WIDTH)])
                 self.score += 10
 
     async def handle_falling(self):
+        """
+        Handles automatic tetromino falling (every 0.5 seconds), as well as
+        landing in case the tetromino touches the ground or another tetromino.
+
+        Besides that, it displays game over screen in case the GameOverError is raised.
+
+        Score is updated appropriately, too.
+        """
         self.counter += 1
         if self.counter == 5:
             try:
@@ -130,6 +161,9 @@ class Game:
                 self.counter = 0
 
     def restart(self):
+        """
+        Restarts the game by putting all vital game parameters to initial state.
+        """
         self.__init__(self.screen, self.user_interface)
 
     async def pause(self):
