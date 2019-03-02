@@ -6,6 +6,7 @@ import trio
 from tetris.core import Game, OutOfBoundsError, CollisionError
 from tetris.user_interface import UserInterface, INNER_SCREEN_HEIGHT, INNER_SCREEN_WIDTH
 
+
 def sync_main():
     curses.wrapper(lambda outer_screen: trio.run(main, outer_screen))
 
