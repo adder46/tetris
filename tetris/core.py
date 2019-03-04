@@ -93,8 +93,8 @@ class Block:
 
     def rotate(self, grid, direction):
         """
-        Rotates a tetromino either left or right whilst making sure
-        it does not go out of bounds, or collide with another tetromino.
+        Rotates a tetromino either left or right if another tetromino is
+        not in its way, whilst making sure it does not go out of bounds.
         """
         current_rotation = BLOCKS[self.letter].index(self.shape)
         next_rotation = current_rotation + DIRECTIONS[direction]
