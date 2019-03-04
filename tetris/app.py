@@ -3,7 +3,8 @@ import sys
 
 import trio
 
-from tetris.core import Game, OutOfBoundsError, CollisionError
+from tetris.core import Game
+from tetris.exceptions import OutOfBoundsError, CollisionError
 from tetris.user_interface import UserInterface, INNER_SCREEN_HEIGHT, INNER_SCREEN_WIDTH
 
 

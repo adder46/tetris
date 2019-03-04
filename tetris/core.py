@@ -4,6 +4,7 @@ import random
 import trio
 
 from tetris.blocks import BLOCKS
+from tetris.exceptions import CollisionError, OutOfBoundsError, GameOverError
 
 
 COLOURS = {
@@ -179,12 +180,3 @@ class Game:
                 continue
             if ord("p") == user_input:
                 break
-
-class OutOfBoundsError(Exception):
-    pass
-
-class CollisionError(Exception):
-    pass
-
-class GameOverError(Exception):
-    pass
