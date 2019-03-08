@@ -58,7 +58,7 @@ class Block:
             for colidx, _ in enumerate(row):
                 if self.shape[rowidx][colidx] != 0:
                     y_coord, x_coord = self.topleft
-                    if colidx + x_coord + DIRECTIONS[direction] not in range(len(grid[0])):
+                    if colidx + x_coord + DIRECTIONS[direction] not in range(GRID_WIDTH):
                         raise OutOfBoundsError
                     if grid[rowidx + y_coord][colidx + x_coord + DIRECTIONS[direction]][0] != 0:
                         raise CollisionError
@@ -74,7 +74,7 @@ class Block:
             for colidx, _ in enumerate(row):
                 if self.shape[rowidx][colidx] != 0:
                     y_coord, x_coord = self.topleft
-                    if rowidx + y_coord + 1 >= len(grid):
+                    if rowidx + y_coord + 1 >= GRID_HEIGHT:
                         raise OutOfBoundsError
                     elif grid[rowidx + y_coord + 1][colidx + x_coord][0] != 0:
                         raise CollisionError
@@ -106,9 +106,9 @@ class Block:
             for colidx, _ in enumerate(row):
                 if potential_shape[rowidx][colidx] != 0:
                     y_coord, x_coord = self.topleft
-                    if colidx + x_coord not in range(len(grid[0])):
+                    if colidx + x_coord not in range(GRID_WIDTH):
                         raise OutOfBoundsError
-                    if rowidx + y_coord >= len(grid):
+                    if rowidx + y_coord >= GRID_HEIGHT:
                         raise OutOfBoundsError
                     if grid[rowidx + y_coord][colidx + x_coord][0] != 0:
                         raise CollisionError
