@@ -31,7 +31,7 @@ class Block:
     def __init__(self):
         self.letter = random.choice(list(BLOCKS.keys()))
         self.shape = random.choice(BLOCKS[self.letter])
-        self.topleft = [0, 4]
+        self.topleft = [0, GRID_WIDTH // 2 - 1]
         self.colour = curses.color_pair(COLOURS[self.letter])
 
     def land(self, grid):
@@ -135,7 +135,7 @@ class Game:
         for row in self.grid.copy():
             if all(x[0] == 1 for x in row):
                 self.grid.remove(row)
-                self.grid.insert(0, [[0, None] for i in range(GRID_WIDTH)])
+                self.grid.insert(0, [[0, None] for _ in range(GRID_WIDTH)])
                 self.score += 10
 
     async def handle_falling(self):
