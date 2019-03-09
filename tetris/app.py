@@ -4,8 +4,8 @@ import sys
 import trio
 
 from tetris.core import Game
-from tetris.exceptions import OutOfBoundsError, CollisionError
-from tetris.user_interface import UserInterface, INNER_SCREEN_HEIGHT, INNER_SCREEN_WIDTH
+from tetris.exceptions import CollisionError, OutOfBoundsError
+from tetris.user_interface import INNER_SCREEN_HEIGHT, INNER_SCREEN_WIDTH, UserInterface
 
 
 def sync_main():
@@ -72,11 +72,13 @@ async def main(outer_screen):
 
         if user_input in bindings["controls"]:
             await bindings["controls"][user_input]()
+
         if user_input in bindings["movements"]:
             try:
                 bindings["movements"][user_input](game.grid)
             except (CollisionError, OutOfBoundsError):
                 continue
+
         if user_input in bindings["rotations"]:
             try:
                 bindings["rotations"][user_input](game.grid)

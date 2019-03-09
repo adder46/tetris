@@ -4,7 +4,7 @@ import random
 import trio
 
 from tetris.blocks import BLOCKS
-from tetris.exceptions import CollisionError, OutOfBoundsError, GameOverError
+from tetris.exceptions import CollisionError, GameOverError, OutOfBoundsError
 
 
 COLOURS = {
@@ -136,7 +136,7 @@ class Game:
             if all(x[0] == 1 for x in row):
                 self.grid.remove(row)
                 self.grid.insert(0, [[0, None] for _ in range(GRID_WIDTH)])
-                self.score += 10
+                self.score += GRID_WIDTH
 
     async def handle_falling(self):
         """
