@@ -46,7 +46,7 @@ class UserInterface:
 
     def display_next_block(self, screen, block):
         """
-        Displays incoming block at the right-hand side of the screen.
+        Displays incoming block at the right-hand side of the play field.
         """
         screen.addstr((curses.LINES // 2 - (INNER_SCREEN_HEIGHT // 2)), (curses.COLS // 2 - (INNER_SCREEN_WIDTH // 2)) + self.cols + 3, "NEXT", curses.A_BOLD)
 
