@@ -18,15 +18,15 @@ async def main(outer_screen):
     curses.curs_set(False)
 
     if UserInterface.ensure_terminal_size():
-        inner_screen = curses.newwin(
-            INNER_SCREEN_HEIGHT, INNER_SCREEN_WIDTH,
-            curses.LINES // 2 - (INNER_SCREEN_HEIGHT // 2),
-            (curses.COLS // 2 - (INNER_SCREEN_WIDTH // 2))
-        )
-        border_screen = curses.newwin(
+        border_screen = outer_screen.subwin(
             1 + INNER_SCREEN_HEIGHT + 1, 1 + INNER_SCREEN_WIDTH + 1,
             (curses.LINES // 2 - (INNER_SCREEN_HEIGHT // 2)) - 1,
             (curses.COLS // 2 - (INNER_SCREEN_WIDTH // 2)) - 1
+        )
+        inner_screen = border_screen.subwin(
+            INNER_SCREEN_HEIGHT, INNER_SCREEN_WIDTH,
+            curses.LINES // 2 - (INNER_SCREEN_HEIGHT // 2),
+            (curses.COLS // 2 - (INNER_SCREEN_WIDTH // 2))
         )
     else:
         sys.exit(f"fatal: minimum terminal size needed [24x80]")
