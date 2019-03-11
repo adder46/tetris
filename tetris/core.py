@@ -122,6 +122,7 @@ class Game:
         self.screen = screen
         self.user_interface = user_interface
         self.block = Block()
+        self.next_block = Block()
         self.grid = [
             [[0, None] for _ in range(GRID_WIDTH)] for _ in range(GRID_HEIGHT)
         ]
@@ -157,7 +158,8 @@ class Game:
                 except GameOverError:
                     await self.user_interface.display_game_over_screen(self)
                 else:
-                    self.block = Block()
+                    self.block = self.next_block
+                    self.next_block = Block()
             finally:
                 self.counter = 0
 

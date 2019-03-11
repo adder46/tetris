@@ -5,8 +5,11 @@ import trio
 
 from tetris.core import Game
 from tetris.exceptions import CollisionError, OutOfBoundsError
-from tetris.user_interface import INNER_SCREEN_HEIGHT, INNER_SCREEN_WIDTH, UserInterface
-
+from tetris.user_interface import (
+    INNER_SCREEN_HEIGHT,
+    INNER_SCREEN_WIDTH,
+    UserInterface
+)
 
 def sync_main():
     curses.wrapper(lambda outer_screen: trio.run(main, outer_screen))
@@ -51,12 +54,15 @@ async def main(outer_screen):
         }
     }
 
+   
     while True:
         inner_screen.erase()
+        outer_screen.erase()
         border_screen.box(0, 0)
 
         user_interface.renderer.render_landed_blocks(game.grid)
         user_interface.renderer.render_current_block(game.block)
+        user_interface.display_next_block(outer_screen, game.next_block)
         user_interface.display_score(outer_screen, game.score)
 
         for screen in (outer_screen, border_screen, inner_screen):

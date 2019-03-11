@@ -3,7 +3,7 @@ import sys
 
 import trio
 
-from tetris.core import GRID_HEIGHT, GRID_WIDTH, COLOURS
+from tetris.core import COLOURS, GRID_HEIGHT, GRID_WIDTH 
 
 
 INNER_SCREEN_WIDTH = GRID_WIDTH * 2
@@ -43,6 +43,20 @@ class UserInterface:
         y_coord = (curses.LINES // 2 - (INNER_SCREEN_HEIGHT // 2)) + self.lines + 1
         x_coord = (curses.COLS // 2 - (INNER_SCREEN_WIDTH // 2)) - 1
         screen.addstr(y_coord, x_coord, f" SCORE: {score} ", curses.A_BOLD)
+
+    def display_next_block(self, screen, block):
+        """
+        Displays current score at the lower left-hand side of the screen.
+        """
+        screen.addstr((curses.LINES // 2 - (INNER_SCREEN_HEIGHT // 2)), (curses.COLS // 2 - (INNER_SCREEN_WIDTH // 2)) + self.cols + 3, "NEXT", curses.A_BOLD)
+
+        for rowidx, row in enumerate(block.shape):
+            for colidx, _ in enumerate(row):
+                if block.shape[rowidx][colidx] != 0:
+                    y_coord = (curses.LINES // 2 - (INNER_SCREEN_HEIGHT // 2)) + 2
+                    x_coord = (curses.COLS // 2 - (INNER_SCREEN_WIDTH // 2)) + self.cols + 3
+                    screen.addstr(rowidx + y_coord, (colidx * 2 + x_coord), "██", block.colour)
+
 
     async def display_game_over_screen(self, game):
         """
