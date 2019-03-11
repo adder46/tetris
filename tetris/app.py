@@ -56,8 +56,9 @@ async def main(outer_screen):
 
    
     while True:
-        inner_screen.erase()
-        outer_screen.erase()
+        for screen in (inner_screen, border_screen, outer_screen):
+            screen.erase()
+
         border_screen.box(0, 0)
 
         user_interface.renderer.render_landed_blocks(game.grid)
