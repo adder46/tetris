@@ -48,7 +48,10 @@ class UserInterface:
         """
         Displays incoming block at the right-hand side of the play field.
         """
-        screen.addstr((curses.LINES // 2 - (INNER_SCREEN_HEIGHT // 2)), (curses.COLS // 2 - (INNER_SCREEN_WIDTH // 2)) + self.cols + 3, "NEXT", curses.A_BOLD)
+        y_coord = (curses.LINES // 2 - (INNER_SCREEN_HEIGHT // 2))
+        x_coord = (curses.COLS // 2 - (INNER_SCREEN_WIDTH // 2))
+
+        screen.addstr(y_coord, x_coord + self.cols + 3, "NEXT", curses.A_BOLD)
 
         for rowidx, row in enumerate(block.shape):
             for colidx, _ in enumerate(row):
