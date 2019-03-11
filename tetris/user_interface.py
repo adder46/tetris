@@ -56,9 +56,11 @@ class UserInterface:
         for rowidx, row in enumerate(block.shape):
             for colidx, _ in enumerate(row):
                 if block.shape[rowidx][colidx] != 0:
-                    y_coord = (curses.LINES // 2 - (INNER_SCREEN_HEIGHT // 2)) + 2
-                    x_coord = (curses.COLS // 2 - (INNER_SCREEN_WIDTH // 2)) + self.cols + 3
-                    screen.addstr(rowidx + y_coord, (colidx * 2 + x_coord), "██", block.colour)
+                    screen.addstr(
+                        rowidx + y_coord + 2,
+                        (colidx * 2) + x_coord + self.cols + 3,
+                        "██", block.colour
+                    )
 
 
     async def display_game_over_screen(self, game):
