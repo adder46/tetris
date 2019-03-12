@@ -29,7 +29,7 @@ async def main(outer_screen):
             (curses.COLS // 2 - (INNER_SCREEN_WIDTH // 2))
         )
     else:
-        sys.exit(f"fatal: minimum terminal size needed [24x80]")
+        sys.exit("fatal: minimum terminal size needed [24x80]")
 
     inner_screen.timeout(100)
     inner_screen.keypad(True)
@@ -46,9 +46,7 @@ async def main(outer_screen):
             curses.KEY_LEFT: lambda grid: game.block.move_sideways(grid, "left"),
             curses.KEY_RIGHT: lambda grid: game.block.move_sideways(grid, "right"),
             curses.KEY_DOWN: lambda grid: game.block.move_down(grid),
-            ord("s"): lambda grid: game.block.move_all_the_way_down(grid)
-        },
-        "rotations": {
+            ord("s"): lambda grid: game.block.move_all_the_way_down(grid),
             ord("a"): lambda grid: game.block.rotate(grid, "left"),
             ord("d"): lambda grid: game.block.rotate(grid, "right"),
         }
@@ -83,11 +81,5 @@ async def main(outer_screen):
         if user_input in bindings["movements"]:
             try:
                 bindings["movements"][user_input](game.grid)
-            except (CollisionError, OutOfBoundsError):
-                continue
-
-        if user_input in bindings["rotations"]:
-            try:
-                bindings["rotations"][user_input](game.grid)
             except (CollisionError, OutOfBoundsError):
                 continue
