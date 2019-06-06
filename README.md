@@ -17,4 +17,6 @@ $ python3 -m pip install -e .
 ```
 Then run `tetris`. 
 
+![screenshot](screenshot.png)
+
 Have a good time!
