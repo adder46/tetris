@@ -11,7 +11,6 @@ from tetris.user_interface import (
     UserInterface
 )
 
-
 bindings = {
     "controls": {
         ord("p"): lambda: game.pause(),
