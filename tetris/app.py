@@ -11,12 +11,23 @@ from tetris.user_interface import (
     UserInterface
 )
 
-def sync_main():
-    curses.wrapper(lambda outer_screen: trio.run(main, outer_screen))
 
-async def main(outer_screen):
-    curses.curs_set(False)
+bindings = {
+    "controls": {
+        ord("p"): lambda: game.pause(),
+        ord("q"): sys.exit,
+    },
+    "movements": {
+        curses.KEY_LEFT: lambda game, grid: game.block.move_sideways(grid, "left"),
+        curses.KEY_RIGHT: lambda game, grid: game.block.move_sideways(grid, "right"),
+        curses.KEY_DOWN: lambda game, grid: game.block.move_down(grid),
+        ord("s"): lambda game, grid: game.block.move_all_the_way_down(grid),
+        ord("a"): lambda game, grid: game.block.rotate(grid, "left"),
+        ord("d"): lambda game, grid: game.block.rotate(grid, "right"),
+    }
+}
 
+def create_screens(outer_screen):
     if UserInterface.ensure_terminal_size():
         border_screen = outer_screen.subwin(
             1 + INNER_SCREEN_HEIGHT + 1, 1 + INNER_SCREEN_WIDTH + 1,
@@ -31,28 +42,22 @@ async def main(outer_screen):
     else:
         sys.exit("fatal: minimum terminal size needed [24x80]")
 
+    return border_screen, inner_screen
+
+def sync_main():
+    curses.wrapper(lambda outer_screen: trio.run(main, outer_screen))
+
+async def main(outer_screen):
+    curses.curs_set(False)
+
+    border_screen, inner_screen = create_screens(outer_screen)
+
     inner_screen.timeout(100)
     inner_screen.keypad(True)
 
     user_interface = UserInterface(inner_screen)
     game = Game(inner_screen, user_interface)
-
-    bindings = {
-        "controls": {
-            ord("p"): game.pause,
-            ord("q"): sys.exit,
-        },
-        "movements": {
-            curses.KEY_LEFT: lambda grid: game.block.move_sideways(grid, "left"),
-            curses.KEY_RIGHT: lambda grid: game.block.move_sideways(grid, "right"),
-            curses.KEY_DOWN: lambda grid: game.block.move_down(grid),
-            ord("s"): lambda grid: game.block.move_all_the_way_down(grid),
-            ord("a"): lambda grid: game.block.rotate(grid, "left"),
-            ord("d"): lambda grid: game.block.rotate(grid, "right"),
-        }
-    }
-
-   
+  
     while True:
         for screen in (inner_screen, border_screen, outer_screen):
             screen.erase()
@@ -80,6 +85,6 @@ async def main(outer_screen):
 
         if user_input in bindings["movements"]:
             try:
-                bindings["movements"][user_input](game.grid)
+                bindings["movements"][user_input](game, game.grid)
             except (CollisionError, OutOfBoundsError):
                 continue
