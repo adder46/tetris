@@ -2,21 +2,25 @@
 
 Classic tetris game implementation written in Python using curses.
 
-## installing tetris
+## Playing
 
-Make sure you have `git`, `pip` and up-to-date `setuptools`:
-```sh
-$ sudo apt install python3-pip git
-$ python3 -m pip install --upgrade setuptools
+You will need [poetry](https://github.com/python-poetry/poetry), preferably with these options in config:
+
+```toml
+virtualenvs.create = true
+virtualenvs.in-project = true
 ```
-Once you have them, run:
+
+Then clone the repo, cd into it, make a venv, activate it, and install the project:
+
 ```sh
-$ git clone https://github.com/adder46/tetris.git
-$ cd tetris
-$ python3 -m pip install -e .
+git clone https://github.com/adder46/tetris
+cd tetris
+poetry env use python3
+. .venv/bin/activate
+poetry install
 ```
-Then run `tetris`. 
 
-![screenshot](screenshot.png)
+## Licensing
 
-Have a good time!
+Licensed under the [MIT License](https://opensource.org/licenses/MIT). For details, see [LICENSE](https://github.com/adder46/pysnake/blob/master/LICENSE)

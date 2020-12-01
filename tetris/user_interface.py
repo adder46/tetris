@@ -3,23 +3,22 @@ import sys
 
 import trio
 
-from tetris.core import COLOURS, GRID_HEIGHT, GRID_WIDTH 
+from tetris import Window
+from tetris.core import COLORS, GRID_HEIGHT, GRID_WIDTH
 
 
-INNER_SCREEN_WIDTH = GRID_WIDTH * 2
-INNER_SCREEN_HEIGHT = GRID_HEIGHT
+SCREEN_WIDTH: int = GRID_WIDTH * 2
+SCREEN_HEIGHT: int = GRID_HEIGHT
 
 
 class UserInterface:
-
-    def __init__(self, screen):
+    def __init__(self, screen: Window):
         self.screen = screen
         self.renderer = Renderer(screen)
-        self.lines, self.cols = screen.getmaxyx()
-        self.make_colour_pairs()
+        self.make_color_pairs()
 
     @staticmethod
-    def ensure_terminal_size():
+    def ensure_terminal_size() -> bool:
         """
         Helper method to ensure correct terminal size
         """
@@ -28,40 +27,40 @@ class UserInterface:
         return False
 
     @staticmethod
-    def make_colour_pairs():
+    def make_color_pairs() -> None:
         """
-        Helper method to make curses colour pairs
+        Helper method to make curses color pairs
         """
         curses.init_color(curses.COLOR_YELLOW, 1000, 1000, 0)
-        for colour in COLOURS.values():
-            curses.init_pair(colour, colour, colour)
+        for color in COLORS.values():
+            curses.init_pair(color, color, color)
 
     def display_score(self, screen, score):
         """
         Displays current score at the lower left-hand side of the screen.
         """
-        y_coord = (curses.LINES // 2 - (INNER_SCREEN_HEIGHT // 2)) + self.lines + 1
-        x_coord = (curses.COLS // 2 - (INNER_SCREEN_WIDTH // 2)) - 1
+        y_coord = (curses.LINES - SCREEN_HEIGHT) // 2 + SCREEN_HEIGHT + 1
+        x_coord = (curses.COLS - SCREEN_WIDTH) // 2 - 1
         screen.addstr(y_coord, x_coord, f" SCORE: {score} ", curses.A_BOLD)
 
     def display_next_block(self, screen, block):
         """
         Displays incoming block at the right-hand side of the play field.
         """
-        y_coord = (curses.LINES // 2 - (INNER_SCREEN_HEIGHT // 2))
-        x_coord = (curses.COLS // 2 - (INNER_SCREEN_WIDTH // 2))
+        y_coord = (curses.LINES - SCREEN_HEIGHT) // 2
+        x_coord = (curses.COLS - SCREEN_WIDTH) // 2
 
-        screen.addstr(y_coord, x_coord + self.cols + 3, "NEXT", curses.A_BOLD)
+        screen.addstr(y_coord, x_coord + SCREEN_WIDTH + 3, "NEXT", curses.A_BOLD)
 
         for rowidx, row in enumerate(block.shape):
             for colidx, _ in enumerate(row):
                 if block.shape[rowidx][colidx] != 0:
                     screen.addstr(
                         rowidx + y_coord + 2,
-                        (colidx * 2) + x_coord + self.cols + 3,
-                        "██", block.colour
+                        (colidx * 2) + x_coord + SCREEN_WIDTH + 3,
+                        "██",
+                        block.color,
                     )
-
 
     async def display_game_over_screen(self, game):
         """
@@ -69,9 +68,9 @@ class UserInterface:
         If the input are keys "q" or "r", it quits or restarts the game, respectively.
         """
         self.screen.erase()
-        self.screen.addstr(self.lines // 2 - 1, self.cols // 2 - 4, "GAME OVER")
-        self.screen.addstr(self.lines // 2, self.cols // 2 - 4, f"SCORE: {game.score}")
-        self.screen.addstr(self.lines // 2 + 2, self.cols // 2 - 8, "[r]estart [q]uit")
+        self.screen.addstr(SCREEN_HEIGHT // 2 - 1, SCREEN_WIDTH // 2 - 4, "GAME OVER")
+        self.screen.addstr(SCREEN_HEIGHT // 2, SCREEN_WIDTH // 2 - 4, f"SCORE: {game.score}")
+        self.screen.addstr(SCREEN_HEIGHT // 2 + 2, SCREEN_WIDTH // 2 - 8, "[r]estart [q]uit")
         self.screen.refresh()
         while True:
             try:
@@ -85,8 +84,8 @@ class UserInterface:
                 game.restart()
                 break
 
-class Renderer:
 
+class Renderer:
     def __init__(self, screen):
         self.screen = screen
 
@@ -96,7 +95,7 @@ class Renderer:
         of the screen, as seen on https://stackoverflow.com/q/36387625
         """
         screen_height, screen_width = self.screen.getmaxyx()
-        if x_coord + len(text) == screen_width and y_coord == screen_height-1:
+        if x_coord + len(text) == screen_width and y_coord == screen_height - 1:
             try:
                 self.screen.addstr(y_coord, x_coord, text, color_info_stuff)
             except curses.error:
@@ -121,4 +120,6 @@ class Renderer:
             for colidx, _ in enumerate(row):
                 if block.shape[rowidx][colidx] != 0:
                     y_coord, x_coord = block.topleft
-                    self._addstr(rowidx + y_coord, (colidx + x_coord) * 2, "██", block.colour)
+                    self._addstr(
+                        rowidx + y_coord, (colidx + x_coord) * 2, "██", block.color
+                    )
